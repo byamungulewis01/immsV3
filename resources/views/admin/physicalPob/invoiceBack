@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Invoice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin-top: -40px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid black;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      border: 1px solid black;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      border: 1px solid black;
+    }
+
+    .total-row {
+      font-weight: bold;
+    }
+    .watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        opacity: 0.3;
+        font-size: 70px;
+        font-weight: bold;
+        color: #CCCCCC;
+        z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="watermark">IPOSITA</div>
+  <h5 >NATIONAL POST OFFICE</h5>
+  <p>E-mail:info@i-posita.rw <br>
+   TEL:250-0252582703 <br>
+   P.O.B: {{ $box->box->pob }} {{ $box->box->branch->name }} <br>
+   Website:www.i-posita.rw <br>
+   <strong>BN: {{ $box->id }}</strong> <br>
+   Client : {{ $box->box->name }}
+
+    <table>
+    <tr>
+      <th>POB</th>
+      <th>AMOUNT</th>
+    </tr>
+    <tr>
+      <td>{{ $box->box->pob }}</td>
+      <td>{{ number_format($box->amount) }} FRW</td>
+    </tr>
+  </table>
+  </p>
+
+</body>
+</html>
