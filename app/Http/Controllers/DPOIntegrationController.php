@@ -37,7 +37,6 @@ class DPOIntegrationController extends Controller
         ];
 
         $dpo = new Dpo;
-
         $token = $dpo->createToken($data);
         $payment_url = $dpo->getPaymentUrl($token);
 

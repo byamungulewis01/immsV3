@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Zepson\Dpo\Dpo;
 use App\Models\UssdSession;
 use Illuminate\Http\Request;
+use App\Models\UssdMeterHistory;
+use App\Models\UccdDpoTransanction;
 
 class UssdController extends Controller
 {
@@ -15,6 +18,8 @@ class UssdController extends Controller
         $serviceCode = $request->serviceCode;
         $networkCode = $request->networkCode;
         $response = "";
+
+        $dpo = new Dpo;
 
         $text = $this->check_session($sessionId, $phoneNumber, $userinput);
         if ($text == "192") {
@@ -29,7 +34,7 @@ class UssdController extends Controller
                     if (count($inputArray) == 2) {
                         $response = "Please choose:\n";
                         $response .= "1) Enter meter number\n";
-                        $response .= "2) Sezlect a saved meter\n";
+                        $response .= "2) Select a saved meter\n";
 
                         $this->ussd_proceed($response);
                     } elseif (count($inputArray) == 3 && $userinput == '1') {
@@ -39,28 +44,93 @@ class UssdController extends Controller
                     } elseif (count($inputArray) == 4 && $inputArray[2] == "1") {
 
                         if (is_numeric($userinput)) {
-                            $meter_name = (new EUCLUssdController())->check_meter($userinput);
-                            $response = "Name on meter : $meter_name" . "\n";
-                            $response .= "Enter amount (min. 500 RWF):  " . "\n";
-                            $this->ussd_proceed($response);
+                            $output = (new EUCLUssdController())->check_meter($userinput);
+                            $status = $output['status'];
+                            if ($status == 1) {
+                                $meter_name = $output['meter_name'];
+
+                                UssdMeterHistory::where('phone', $phoneNumber)->where('meter_number', $userinput)->firstOrCreate([
+                                    'phone' => $phoneNumber,
+                                    'meter_number' => $userinput,
+                                    'meter_name' => $meter_name,
+                                ]);
+
+                                $response = "Name on meter : $meter_name" . "\n";
+                                $response .= "Enter amount (min. 20 RWF):  " . "\n";
+                                $this->ussd_proceed($response);
+                            } elseif ($status == 2) {
+                                $response = "Meter not found. Please check your meter number \n";
+                                $this->ussd_stop($response);
+                            } else {
+                                $response = "server not reachable . Please try again. \n";
+                                $this->ussd_stop($response);
+                            }
+
                         } else {
-                            $response .= "Meter should be numeric. Please try again. \n";
+                            $response = "Meter should be numeric. Please try again. \n";
                             $this->ussd_stop($response);
                         }
 
                     } elseif (count($inputArray) == 5 && $inputArray[2] == "1") {
 
-                        if (!$this->validateAmount($userinput, 500)) {
+                        if (!$this->validateAmount($userinput, 20)) {
                             $response = "Invalid amount. Please try again.";
                             $this->ussd_stop($response);
-                        }else{
-
+                        } else {
                             $meter_number = $inputArray[3];
-                            $response = "About buy electricity for $userinput meter $meter_number";
-                            $this->ussd_proceed($response);
+
+                            $data = [
+                                'paymentAmount' => $userinput,
+                                'paymentCurrency' => "RWF",
+                                'customerFirstName' => $meter_number,
+                                'customerLastName' => "",
+                                'customerAddress' => "Kigali",
+                                'customerCity' => "Kigali",
+                                'customerPhone' => $phoneNumber,
+                                'customerEmail' => "",
+                                'companyRef' => "49FKEOA",
+                            ];
+                            $token = $dpo->createToken($data);
+                            if ($token['result'] == 000 && $token['success']) {
+                                $transToken = $token['transToken'];
+                                $transRef = $token['transRef'];
+                                $orderData = [
+                                    'phoneNumber' => $phoneNumber,
+                                    'transactionToken' => $transToken,
+                                ];
+                                $data = $dpo->chargeMobile($orderData);
+
+                                $status = $data['status'];
+                                $success = $data['success'];
+                                if ($status == 130 && $success) {
+
+                                    UccdDpoTransanction::create([
+                                        'phone' => $phoneNumber,
+                                        'trans_token' => $transToken,
+                                        'trans_ref' => $transRef,
+                                        'meter_number' => $meter_number,
+                                        'amount' => $userinput,
+                                    ]);
+
+                                    $response = "If you didn't receive a push prompt please enter *182*7*1# then MoMo PIN to continue";
+                                    $this->ussd_stop($response);
+                                } elseif ($status == 130 && !$success) {
+                                    $response = "Not charged. Please try again  \n";
+                                    $this->ussd_stop($response);
+                                } else {
+                                    $response = "server not reachable . Please try again. \n";
+                                    $this->ussd_stop($response);
+                                }
+
+                            } else {
+                                $response = "Ooops not work. Please try again. \n";
+                                $this->ussd_stop($response);
+                            }
+
+
                         }
 
-                    }elseif (count($inputArray) == 3 && $userinput == '2') {
+                    } elseif (count($inputArray) == 3 && $userinput == '2') {
                         $response = "Select Meter\n";
                         $this->ussd_proceed($response);
                     } else {
@@ -149,7 +219,8 @@ class UssdController extends Controller
         echo $response;
     }
 
-    private function validateAmount($amount, $minimumAmount) {
+    private function validateAmount($amount, $minimumAmount)
+    {
         return is_numeric($amount) && $amount >= $minimumAmount;
     }
 
