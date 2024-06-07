@@ -56,7 +56,7 @@ class UssdController extends Controller
                                 ]);
 
                                 $response = "Name on meter : $meter_name" . "\n";
-                                $response .= "Enter amount (min. 20 RWF):  " . "\n";
+                                $response .= "Enter amount (min. 100 RWF):  " . "\n";
                                 $this->ussd_proceed($response);
                             } elseif ($status == 2) {
                                 $response = "Meter not found. Please check your meter number \n";
@@ -150,7 +150,7 @@ class UssdController extends Controller
                             $meter = $fetch['meter'];
                             $name = $fetch['name'];
                             $response = $meter . " Name on meter $name \n";
-                            $response .= "Enter amount (min. 20 RWF):  " . "\n";
+                            $response .= "Enter amount (min. 100 RWF):  " . "\n";
                             $this->ussd_proceed($response);
                         } else {
                             $response = "Invalid choice. Please try again. \n";
@@ -280,7 +280,7 @@ class UssdController extends Controller
     private function pay_electricity($meter_number)
     {
         $dpo = new Dpo;
-        if (!$this->validateAmount($this->userinput, 20)) {
+        if (!$this->validateAmount($this->userinput, 100)) {
             $response = "Invalid amount. Please try again.";
             $this->ussd_stop($response);
         } else {
@@ -305,7 +305,7 @@ class UssdController extends Controller
                     'phoneNumber' => $this->phoneNumber,
                     'transactionToken' => $transToken,
                 ];
-                // $data = $dpo->chargeMobile($orderData);
+                $data = $dpo->chargeMobile($orderData);
 
                 $status = $data['status'];
                 $success = $data['success'];
