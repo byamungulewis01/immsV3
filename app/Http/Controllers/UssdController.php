@@ -164,9 +164,9 @@ class UssdController extends Controller
                         if ($fetch['success']) {
                             $meter = $fetch['meter'];
 
-                            $response = $meter;
-                            $this->ussd_stop($response);
-                            // $this->pay_electricity($meter);
+                            $this->pay_electricity($meter);
+                            // $response = $meter;
+                            // $this->ussd_stop($response);
 
                         } else {
                             $response = "Invalid choice. Please try again Hereeee. \n";
