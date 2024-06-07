@@ -334,11 +334,11 @@
                                                                 <div class="row">
                                                                     <div class="col-md-4 mb-3">
                                                                         <label for="email-field" class="form-label">Enter
-                                                                            Number of PERCEL</label>
+                                                                            Number of PARCEL</label>
                                                                         <input type="number" min="0"
                                                                             id="email-field" class="form-control"
                                                                             name="percel"
-                                                                            placeholder="Enter Number of Percel"
+                                                                            placeholder="Enter Number of Parcel"
                                                                             value="{{ old('percel') }}"
                                                                             autocomplete="off" />
                                                                         <div class="invalid-feedback">

@@ -76,7 +76,7 @@
                             <td class="NAME">{{ $pay->detailsin->inname }}</td>
                             <td class="P.O BOX">{{ $pay->detailsin->phone }}</td>
                             <td class="P.O BOX">{{ $pay->created_at }}</td>
-                            <td><a href="{{ route('admin.mailde.invoice', $pay->cid) }}" class="btn btn-sm btn-primary" target="_blank">PRINT</a>
+                            <td><a href="{{ route('admin.mailde.invoice', $pay->id) }}" class="btn btn-sm btn-primary" target="_blank">PRINT</a>
                             </td>
                         </tr>
                         @endforeach

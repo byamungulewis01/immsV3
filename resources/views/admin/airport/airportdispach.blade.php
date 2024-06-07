@@ -194,9 +194,9 @@
                                                     @endif
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="customername-field" class="form-label">Dispatch Number
+                                                    <label for="dispatchNumber" class="form-label">Dispatch Number
                                                     </label>
-                                                    <input type="text" id="customername-field" name="dispatchNumber"
+                                                    <input type="text" id="dispatchNumber" name="dispatchNumber"
                                                         class="form-control" placeholder="Enter Dispach Number"
                                                         value="{{ $inboxing->dispatchNumber }} {{ old('dispatchNumber') }}"
                                                         required autocomplete="off" />
@@ -211,9 +211,9 @@
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
 
-                                                        <label for="name-field" class="form-label">Gross
+                                                        <label for="grossweight" class="form-label">Gross
                                                             Weight/kg</label>
-                                                        <input type="text" id="email-field" class="form-control"
+                                                        <input type="number" id="grossweight" class="form-control"
                                                             name="grossweight" placeholder="Enter Gross Weight" required
                                                             value="{{ $inboxing->grossweight }} {{ old('grossweight') }}"
                                                             autocomplete="off" />
@@ -222,9 +222,9 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label for="customername-field" class="form-label">Mail Weight/Kg
+                                                        <label for="mailweight" class="form-label">Mail Weight/Kg
                                                         </label>
-                                                        <input type="text" id="customername-field" name="mailweight"
+                                                        <input type="number" id="mailweight" name="mailweight"
                                                             class="form-control" placeholder=" Mail Weight"
                                                             value="{{ $inboxing->grossweight }} {{ old('mailweight') }}"
                                                             autocomplete="off" />
@@ -235,9 +235,9 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
-                                                        <label for="customername-field" class="form-label">Number of Item
+                                                        <label for="numberitem" class="form-label">Number of Item
                                                         </label>
-                                                        <input type="text" id="customername-field" name="numberitem"
+                                                        <input type="number" id="numberitem" name="numberitem"
                                                             class="form-control" placeholder="Enter Number of Item"
                                                             value="{{ $inboxing->numberitem }} {{ old('numberitem') }}"
                                                             required autocomplete="off" />
@@ -247,10 +247,10 @@
 
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label for="customername-field" class="form-label">Current Weight
+                                                        <label for="currentweight" class="form-label">Current Weight
                                                             (kg)
                                                         </label>
-                                                        <input type="text" id="customername-field"
+                                                        <input type="number" id="currentweight"
                                                             name="currentweight" class="form-control"
                                                             placeholder="Current Weight"
                                                             value="{{ $inboxing->currentweight }} {{ old('currentweight') }}"
@@ -262,9 +262,9 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
-                                                        <label for="status-field" class="form-label">Dispatch Type</label>
+                                                        <label for="dispachetype" class="form-label">Dispatch Type</label>
                                                         <select class="form-control" data-choices data-choices-search-false
-                                                            name="dispachetype" id="status-field" required>
+                                                            name="dispachetype" id="dispachetype" required>
                                                             <option value="Mails" selected>
                                                                 Mails</option>
                                                             <option {{ old('dispachetype') == 'EMS' ? 'selected' : '' }}
@@ -274,7 +274,7 @@
                                                             <option {{ old('dispachetype') == 'PERCEL' ? 'selected' : '' }}
                                                                 @if ($inboxing->dispachetype == 'PERCEL') selected @endif
                                                                 value="PERCEL">
-                                                                PERCEL
+                                                                PARCEL
                                                             </option>
 
 
@@ -282,7 +282,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
-                                                        <label for="name-field" class="form-label">Orgin
+                                                        <label for="countries" class="form-label">Orgin
                                                             Country</label>
 
                                                         <select class="form-select" name="orgincountry" id="countries"
@@ -299,8 +299,8 @@
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <label for="VertimeassageInput" class="form-label">Comment</label>
-                                                    <textarea class="form-control" id="VertimeassageInput" name="comment" rows="3"
+                                                    <label for="comment" class="form-label">Comment</label>
+                                                    <textarea class="form-control" id="comment" name="comment" rows="3"
                                                         placeholder="Enter your comment">{{ $inboxing->comment }}  {{ old('comment') }}</textarea>
 
                                                 </div>
@@ -380,7 +380,7 @@
                             <div class="col-md-6 mb-3">
 
                                 <label for="grossweight" class="form-label">Gross Weight(kg)</label>
-                                <input type="number" min="0" id="grossweight" class="form-control"
+                                <input type="number" min="0" step="0.1" id="grossweight" class="form-control"
                                     name="grossweight" placeholder="Enter Gross Weight" required
                                     value="{{ old('grossweight') }}" />
                                 <div class="invalid-feedback">
@@ -390,7 +390,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="mailweight" class="form-label">Mail Weight(kg)
                                 </label>
-                                <input type="number" min="0" id="mailweight" name="mailweight"
+                                <input type="number" min="0" step="0.1" id="mailweight" name="mailweight"
                                     class="form-control" placeholder="Mail Weight" value="{{ old('mailweight') }}"
                                     autocomplete="off" />
                                 <div class="invalid-feedback">
@@ -413,7 +413,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="currentweigth" class="form-label">Current Weight(kg)
                                 </label>
-                                <input type="number" min="0" id="currentweigth" name="currentweight"
+                                <input type="number" min="0" step="0.1" id="currentweigth" name="currentweight"
                                     class="form-control" placeholder="Current Weight" value="{{ old('currentweight') }}"
                                     autocomplete="off" />
                                 <div class="invalid-feedback">
@@ -429,16 +429,14 @@
                                     <option value="" disabled selected>Dispatch Type</option>
                                     <option {{ old('dispachetype') == 'EMS' ? 'selected' : '' }} value="EMS">EMS
                                     </option>
-                                    <option {{ old('dispachetype') == 'PERCEL' ? 'selected' : '' }} value="PERCEL">PERCEL
+                                    <option {{ old('dispachetype') == 'PERCEL' ? 'selected' : '' }} value="PERCEL">PARCEL
                                     </option>
                                     <option {{ old('dispachetype') == 'Mails' ? 'selected' : '' }} value="Mails">Mails
                                     </option>
-
-
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="name-field" class="form-label">Orgin Country</label>
+                                <label for="countries" class="form-label">Orgin Country</label>
 
                                 <select class="form-select" name="orgincountry" type="text" id="countries" required>
                                     <option value="" disabled selected>Orgin Country</option>
@@ -452,8 +450,8 @@
 
 
                         <div class="mb-3">
-                            <label for="VertimeassageInput" class="form-label">Comment</label>
-                            <textarea class="form-control" id="VertimeassageInput" name="comment" rows="3"
+                            <label for="comment" class="form-label">Comment</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3"
                                 placeholder="Enter your comment">{{ old('comment') }}</textarea>
 
                         </div>

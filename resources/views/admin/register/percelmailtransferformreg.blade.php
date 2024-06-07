@@ -14,7 +14,7 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0">
                     @foreach ($bras as $key => $bra)
-                        PERCEL MAIL TRANSFER LIST IN {{ $bra->name }} BRANCH
+                        PARCEL MAIL TRANSFER LIST IN {{ $bra->name }} BRANCH
                 </h4>
 
                 <div class="page-title-right">
@@ -40,13 +40,13 @@
                                 @csrf
 
                                 <button type="button" class="btn btn-primary " data-bs-toggle="modal"
-                                    data-bs-target="#myModal">Percel Transfer By Number</button>
+                                    data-bs-target="#myModal">Parcel Transfer By Number</button>
                                 <div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel"
                                     aria-hidden="true" style="display: none;">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="myModalLabel">PERCEL TRANSFER BY NUMBER IN
+                                                <h5 class="modal-title" id="myModalLabel">PARCEL TRANSFER BY NUMBER IN
                                                     {{ $bra->name }} BRANCH</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"> </button>
@@ -57,7 +57,7 @@
                                                     required value={{ $bra->id }} name="mnumber">
                                                 <label for="customername-field" class="form-label">
 
-                                                    NUMBER OF PERCEL</label>
+                                                    NUMBER OF PARCEL</label>
                                                 <div class="mb-3">
                                                     <input type="number" name="mnumber" id="simpleinput"
                                                         class="form-control" required name="mnumber" autocomplete="off">
@@ -83,7 +83,7 @@
 
                                 <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
                                     id="create-btn" data-bs-target="#showModal">
-                                    <i class="ri-add-line align-bottom me-1"></i> PERCEL Transfer
+                                    <i class="ri-add-line align-bottom me-1"></i> PARCEL Transfer
                                 </button>
 
 
@@ -125,7 +125,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"> PERCEL MAIL TRANSFER IN
+                                <h5 class="modal-title" id="exampleModalLabel"> PARCEL MAIL TRANSFER IN
                                     {{ $bra->name }} BRANCH </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                     id="close-modal"></button>
@@ -189,7 +189,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
                             <div class="modal-header bg-light p-3">
-                                <h5 class="modal-title" id="exampleModalLabel"> PERCEL MAIL TRANSFER IN
+                                <h5 class="modal-title" id="exampleModalLabel"> PARCEL MAIL TRANSFER IN
                                     {{ $bra->name }} BRANCH </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                     id="close-modal"></button>

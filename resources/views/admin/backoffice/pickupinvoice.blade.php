@@ -41,7 +41,7 @@ table thead td { background-color: #EEEEEE;
         left: 50%;
         transform: translate(-50%, -50%) rotate(-45deg);
         opacity: 0.3;
-        font-size: 50px;
+        font-size: 30px;
         font-weight: bold;
         color: #5c5c5c;
         z-index: -1;
@@ -53,7 +53,7 @@ table thead td { background-color: #EEEEEE;
 
 <htmlpageheader name="myheader">
 <table width="100%"><tr>
-<td width="100%" style="color:#0000BB; "><span style="font-weight: bold; font-size: 11pt;">NATIONAL POST OFFICE</span><br> E-mail :info@i-posita.rw<br /> TEL : 250-0252582703 <br> B.P. 4 KIGALI
+<td width="100%" style="color:#00001e; "><span style="font-weight: bold; font-size: 11pt;">NATIONAL POST OFFICE</span><br> E-mail :info@i-posita.rw<br /> TEL : 250-0252582703 <br> B.P. 4 KIGALI
 <br /> Website: www.i-posita.rw </td>
 </tr></table>
 
@@ -63,7 +63,7 @@ table thead td { background-color: #EEEEEE;
 <sethtmlpageheader name="myheader" value="on" show-this-page="1" />
 <sethtmlpagefooter name="myfooter" value="on" />
 <div style="font-weight: bold; font-size: 12pt;" >BN: {{ $pay->id}}</div>
-<div style=" font-size: 12pt;" >Client:{{ $pay->inname }}</div> <br>
+<div style=" font-size: 12pt;" >Client:{{ $pay->detailsin->inname }}</div> <br>
 <table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse; " cellpadding="8">
 <thead>
 <tr>
@@ -78,8 +78,8 @@ table thead td { background-color: #EEEEEE;
 
 
 <tr>
-<td align="center">{{ $pay->innumber }}</td>
-<td align="center">{{ $pay->amount}} Frw</td>
+<td align="center">{{ $pay->detailsin->innumber }}</td>
+<td align="center">{{ number_format($pay->amount)}} Frw</td>
 
 
 </tr>
@@ -98,7 +98,7 @@ bottom: 0;">
 </div>
 <htmlpageheader name="myheader">
 <table width="100%"><tr>
-<td width="100%" style="color:#0000BB; "><span style="font-weight: bold; font-size: 11pt;">NATIONAL POST OFFICE</span><br> E-mail :info@i-posita.rw<br /> TEL : 250-0252582703 <br> B.P. 4 KIGALI
+<td width="100%" style="color:#00001e; "><span style="font-weight: bold; font-size: 11pt;">NATIONAL POST OFFICE</span><br> E-mail :info@i-posita.rw<br /> TEL : 250-0252582703 <br> B.P. 4 KIGALI
 <br /> Website: www.i-posita.rw </td>
 </tr></table>
 
@@ -109,7 +109,7 @@ bottom: 0;">
 <sethtmlpagefooter name="myfooter" value="on" />
 <div style="font-weight: bold; font-size: 12pt;" >BN: {{ $pay->id}}</div>
 
-<div style=" font-size: 12pt;" >Client:{{$pay->inname }}</div> <br>
+<div style=" font-size: 12pt;" >Client:{{$pay->detailsin->inname }}</div> <br>
 <table class="items" width="100%" style="font-size: 9pt; border-collapse: collapse; " cellpadding="8">
 <thead>
 <tr>
@@ -122,8 +122,8 @@ bottom: 0;">
 
 
 <tr>
-<td align="center">{{ $pay->innumber }}</td>
-<td align="center">{{$pay->amount}} Frw</td>
+<td align="center">{{ $pay->detailsin->innumber }}</td>
+<td align="center">{{number_format($pay->amount)}} Frw</td>
 
 
 </tr>

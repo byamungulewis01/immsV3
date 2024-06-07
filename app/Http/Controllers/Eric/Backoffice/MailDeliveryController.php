@@ -25,12 +25,12 @@ class MailDeliveryController extends Controller
         $ordinaryReports = InboxingReport::where('branch', auth()->user()->branch)->where('mailtype', 'o')->orderByDesc('id')->get();
         $registeredReports = InboxingReport::where('branch', auth()->user()->branch)->where('mailtype', 'r')->orderByDesc('id')->get();
         $googleReports = InboxingReport::where('branch', auth()->user()->branch)->where('mailtype', 'GAD')->orderByDesc('id')->get();
-        
+
         return view('admin.backoffice.reports', compact('emsReports', 'percelReports', 'ordinaryReports', 'registeredReports', 'googleReports'));
     }
     public function invoice($cid)
     {
-        $pay = Inboxing::find($cid);
+        $pay = Courierpay::find($cid);
         $pdf = Pdf::loadView('admin.backoffice.pickupinvoice', compact('pay'))
             ->setPaper('a7', 'portrait');
         return $pdf->stream('invoice.pdf');

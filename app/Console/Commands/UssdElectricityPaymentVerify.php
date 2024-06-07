@@ -23,7 +23,7 @@ class UssdElectricityPaymentVerify extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Electricity payment verification';
 
     /**
      * Execute the console command.
@@ -33,20 +33,28 @@ class UssdElectricityPaymentVerify extends Command
 
         //
         $dpo = new Dpo();
+        $fiveMinutesAgo = now()->subMinutes(5);
 
-        $transactions = UccdDpoTransanction::first();
-        $transToken = $transactions->trans_token;
-        $amount = $transactions->amount;
-        $meter = $transactions->meter_number;
+        $transactions = UccdDpoTransanction::where('status', 'new')->where('created_at', '>=', $fiveMinutesAgo)->get();
+        if ($transactions->isEmpty()) {
+            UccdDpoTransanction::where('status', 'new')->where('created_at', '<', $fiveMinutesAgo)->update(['status' => 'fail']);
+        } else {
+            foreach ($transactions as $transaction) {
+                $transToken = $transaction->trans_token;
+                $amount = $transaction->amount;
+                $meter = $transaction->meter_number;
 
-        $verify = $dpo->verifyToken($transToken);
-        if ($verify == '000') {
-            UccdDpoTransanction::where('trans_token', $transToken)->update(['status' => 'success']);
-            $response = (new EUCLUssdController)->buy_electrity($meter, $amount);
-            if ($response) {
-                $this->sendSms($response);
+                $verify = $dpo->verifyToken($transToken);
+                if ($verify == '000') {
+                    UccdDpoTransanction::where('trans_token', $transToken)->update(['status' => 'success']);
+                    $response = (new EUCLUssdController)->buy_electrity($meter, $amount);
+                    if ($response) {
+                        $this->sendSms($response);
+                    }
+                }
             }
         }
+
         $this->info('notify client');
 
     }

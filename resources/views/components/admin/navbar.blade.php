@@ -59,7 +59,7 @@
                                         Driver
                                     @elseif(auth()->user()->level == 'cntp')
                                         @if (auth()->user()->cntpoffice == 'perceloffice')
-                                            CNTP - PERCEL Office
+                                            CNTP - PARCEL Office
                                         @elseif(auth()->user()->cntpoffice == 'emscntp')
                                             CNTP - EMS Office
                                         @elseif(auth()->user()->cntpoffice == 'boxoffice')

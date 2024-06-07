@@ -15,7 +15,7 @@
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 @foreach ($bras as $key => $bra)
-                    <h4 class="mb-sm-0">PERCEL Mail Registration {{ $bra->name }}</h4>
+                    <h4 class="mb-sm-0">PARCEL Mail Registration {{ $bra->name }}</h4>
                 @endforeach
 
                 <div class="page-title-right">
@@ -23,7 +23,7 @@
                         <li class="breadcrumb-item">
                             <a href="javascript: void(0);">IMMS Mail</a>
                         </li>
-                        <li class="breadcrumb-item active">PERCEL Mail</li>
+                        <li class="breadcrumb-item active">PARCEL Mail</li>
                     </ol>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                         <div class="col-sm">
                             <div>
                                 @foreach ($bras as $key => $bra)
-                                    <h5 class="card-title mb-0">PERCEL MAIL REGISTRATION LIST IN {{ $bra->name }}</h5>
+                                    <h5 class="card-title mb-0">PARCEL MAIL REGISTRATION LIST IN {{ $bra->name }}</h5>
                                 @endforeach
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                 <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
                                     id="create-btn" data-bs-target="#showModal">
                                     <i class="ri-add-line align-bottom me-1"></i>New
-                                    PERCEL Mail
+                                    PARCEL Mail
                                 </button>
 
 
@@ -92,7 +92,7 @@
                                     <th scope="row">
                                         {{ $key + 1 }}
                                     </th>
-                                    <td class="MAIL CODE"><a href="">{{ $inboxing->innumber }}</a></td>
+                                    <td class="MAIL CODE">{{ $inboxing->innumber }}</td>
                                     <td class="TRACKING NUMBER">{{ $inboxing->intracking }}</td>
                                     <td class="NAME">{{ $inboxing->inname }}</td>
                                     <td class="PHONE">{{ $inboxing->phone }}</td>
@@ -149,9 +149,9 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="customername-field" class="form-label">Tracking
+                                                        <label for="intracking" class="form-label">Tracking
                                                             Number</label>
-                                                        <input type="text" id="customername-field" name="intracking"
+                                                        <input type="text" id="intracking" name="intracking"
                                                             class="form-control" placeholder="Enter Tracking Number"
                                                             value="{{ $inboxing->intracking }} {{ old('intracking') }}"
                                                             required autocomplete="off" />
@@ -161,8 +161,8 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="name-field" class="form-label">Names</label>
-                                                        <input type="text" id="email-field" class="form-control"
+                                                        <label for="name" class="form-label">Names</label>
+                                                        <input type="text" id="name" class="form-control"
                                                             name="inname" placeholder="Enter Names" required
                                                             value="{{ $inboxing->inname }} {{ old('inname') }}"
                                                             autocomplete="off" />
@@ -174,10 +174,10 @@
 
                                                     <div class="row">
                                                         <div class="col-md-6 mb-3">
-                                                            <label for="status-field" class="form-label">Weight
+                                                            <label for="weight" class="form-label">Weight
                                                                 /Kg</label>
-                                                            <input type="text" id="phone-field" name="weight"
-                                                                class="form-control phoneNumber"
+                                                            <input type="number" step="0.1" id="weight" name="weight"
+                                                                class="form-control"
                                                                 placeholder="Enter Weight." required
                                                                 value="{{ $inboxing->weight }} {{ old('weight') }}"
                                                                 autocomplete="off" />
@@ -186,8 +186,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 mb-3">
-                                                            <label for="" class="form-label">Phone</label>
-                                                            <input type="text" name="phone"
+                                                            <label for="phoneNumber" class="form-label">Phone</label>
+                                                            <input type="text" name="phone" id="phoneNumber"
                                                                 class="form-control phoneNumber"
                                                                 placeholder="Enter phone no." maxlength="10"
                                                                 minlength="10"
@@ -201,9 +201,9 @@
                                                     <div class="row">
 
                                                         <div class="col-md-6 mb-3">
-                                                            <label for="customername-field" class="form-label">P.O BOX
+                                                            <label for="pob" class="form-label">P.O BOX
                                                             </label>
-                                                            <input type="text" id="customername-field" name="pob"
+                                                            <input type="number" id="pob" name="pob"
                                                                 class="form-control" placeholder="Enter P.O BOX "
                                                                 value="{{ $inboxing->pob }}{{ old('pob') }}"
                                                                 autocomplete="off" />
@@ -226,7 +226,7 @@
                                                             </select>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="customername-field" class="form-label">Orgin
+                                                            <label for="countries" class="form-label">Orgin
                                                                 Country
                                                             </label>
                                                             <select class="form-select" name="orgcountry" type="text"
@@ -243,9 +243,9 @@
 
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label for="status-field" class="form-label">Comment</label>
+                                                            <label for="comment" class="form-label">Comment</label>
                                                             <select class="form-control" data-choices
-                                                                data-choices-search-false name="comment" id="status-field"
+                                                                data-choices-search-false name="comment" id="comment"
                                                                 required>
                                                                 <option @if (old('comment') == 'Item recieved') selected @endif
                                                                     value="Item recieved">Item recieved</option>
@@ -288,7 +288,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header bg-light p-3">
-                            <h5 class="modal-title" id="exampleModalLabel">PERCEL Mail Registration</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">PARCEL Mail Registration</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                 id="close-modal"></button>
                         </div>
@@ -309,9 +309,9 @@
                                 </div>
                                 <input type="hidden" name="location" value="{{ decrypt($id) }}" />
                                 <div class="mb-3">
-                                    <label for="customername-field" class="form-label">Tracking
+                                    <label for="intracking" class="form-label">Tracking
                                         Number</label>
-                                    <input type="text" id="customername-field" name="intracking" class="form-control"
+                                    <input type="text" id="intracking" name="intracking" class="form-control"
                                         placeholder="Enter Tracking Number" value="{{ old('intracking') }}" required
                                         autocomplete="off" />
                                     <div class="invalid-feedback">
@@ -320,8 +320,8 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="name-field" class="form-label">Names</label>
-                                    <input type="text" id="email-field" class="form-control" name="inname"
+                                    <label for="name" class="form-label">Names</label>
+                                    <input type="text" id="name" class="form-control" name="inname"
                                         placeholder="Enter Names" required value="{{ old('inname') }}"
                                         autocomplete="off" />
                                     <div class="invalid-feedback">
@@ -332,8 +332,8 @@
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="status-field" class="form-label">Weight /Kg</label>
-                                        <input type="text" id="phone-field" name="weight"
+                                        <label for="weight" class="form-label">Weight /Kg</label>
+                                        <input type="number" step="0.1" id="weight" name="weight"
                                             class="form-control phoneNumber" placeholder="Enter Weight." required
                                             value="{{ old('weight') }}" autocomplete="off" />
                                         <div class="invalid-feedback">
@@ -341,8 +341,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">Phone</label>
-                                        <input type="number" name="phone" class="form-control phoneNumber"
+                                        <label for="phone" class="form-label">Phone</label>
+                                        <input type="text" id="phone" name="phone" class="form-control phoneNumber"
                                             placeholder="Enter phone no." maxlength="10" minlength="10"
                                             value="{{ old('phone') }}" autocomplete="off" />
                                         <div class="invalid-feedback">
@@ -353,9 +353,9 @@
                                 <div class="row">
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="customername-field" class="form-label">P.O BOX
+                                        <label for="pob" class="form-label">P.O BOX
                                         </label>
-                                        <input type="text" id="customername-field" name="pob"
+                                        <input type="number" id="pob" name="pob"
                                             class="form-control" placeholder="Enter P.O BOX "
                                             value="{{ old('pob') }}" autocomplete="off" />
                                         <div class="invalid-feedback">
@@ -386,9 +386,9 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="status-field" class="form-label">Comment</label>
+                                        <label for="comment" class="form-label">Comment</label>
                                         <select class="form-control" data-choices data-choices-search-false name="comment"
-                                            id="status-field" required>
+                                            id="comment" required>
                                             <option @if (old('comment') == 'Item recieved') selected @endif
                                                 value="Item recieved">Item recieved</option>
                                             <option @if (old('comment') == 'Item recieved torn and Repaired at the CNTP') selected @endif

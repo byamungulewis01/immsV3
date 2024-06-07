@@ -41,12 +41,12 @@ class AirportMailController extends Controller
         $formField = $request->validate([
             'orgincountry' => 'required',
             'comment' => 'required',
-            'grossweight' => 'required|numeric|',
-            'mailweight' => '',
+            'grossweight' => 'required',
+            'mailweight' => 'nullable',
             'dispatchNumber' => 'required|unique:airport_dispaches',
-            'currentweight' => 'required|numeric|',
+            'currentweight' => 'required',
             'dispachetype' => 'required',
-            'numberitem' => 'required|numeric',
+            'numberitem' => 'required',
 
         ]);
 
