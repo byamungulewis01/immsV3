@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UccdDpoTransanction;
-use App\Models\UssdMeterHistory;
+use Zepson\Dpo\Dpo;
+use App\Models\Branch;
 use App\Models\UssdSession;
 use Illuminate\Http\Request;
-use Zepson\Dpo\Dpo;
+use App\Models\UssdMeterHistory;
+use App\Models\UccdDpoTransanction;
 
 class UssdController extends Controller
 {
@@ -23,8 +24,6 @@ class UssdController extends Controller
 
         $text = $this->check_session();
         if ($text == "192") {
-            header('FreeFlow: FC');
-            header('Content-type: text/plain');
             return $this->home_menu();
         } else {
             $inputArray = explode("*", $text);
@@ -32,17 +31,14 @@ class UssdController extends Controller
                 case "1":
                     // Buy Electricity
                     if (count($inputArray) == 2) {
-                        $response = "Please choose:\n";
-                        $response .= "1) Enter meter number\n";
-                        $response .= "2) Select a saved meter\n";
-
-                        $this->ussd_proceed($response);
+                      $this->electricity_menu();
+                    } elseif (count($inputArray) == 3 && $this->userinput == '0') {
+                        $this->goBack();
+                        $this->home_menu();
                     } elseif (count($inputArray) == 3 && $this->userinput == '1') {
                         $response = "Enter Your Meter Number \n";
-
                         $this->ussd_proceed($response);
                     } elseif (count($inputArray) == 4 && $inputArray[2] == "1") {
-
                         if (is_numeric($this->userinput)) {
                             $output = (new EUCLUssdController())->check_meter($this->userinput);
                             $status = $output['status'];
@@ -73,62 +69,6 @@ class UssdController extends Controller
 
                     } elseif (count($inputArray) == 5 && $inputArray[2] == "1") {
                         $meter_number = $inputArray[3];
-                        // if (!$this->validateAmount($this->userinput, 20)) {
-                        //     $response = "Invalid amount. Please try again.";
-                        //     $this->ussd_stop($response);
-                        // } else {
-                        //     $meter_number = $inputArray[3];
-
-                        //     $data = [
-                        //         'paymentAmount' => $this->userinput,
-                        //         'paymentCurrency' => "RWF",
-                        //         'customerFirstName' => $meter_number,
-                        //         'customerLastName' => "",
-                        //         'customerAddress' => "Kigali",
-                        //         'customerCity' => "Kigali",
-                        //         'customerPhone' => $this->phoneNumber,
-                        //         'customerEmail' => "",
-                        //         'companyRef' => "49FKEOA",
-                        //     ];
-                        //     $token = $dpo->createToken($data);
-                        //     if ($token['result'] == 000 && $token['success']) {
-                        //         $transToken = $token['transToken'];
-                        //         $transRef = $token['transRef'];
-                        //         $orderData = [
-                        //             'phoneNumber' => $phoneNumber,
-                        //             'transactionToken' => $transToken,
-                        //         ];
-                        //         // $data = $dpo->chargeMobile($orderData);
-
-                        //         $status = $data['status'];
-                        //         $success = $data['success'];
-                        //         if ($status == 130 && $success) {
-
-                        //             UccdDpoTransanction::create([
-                        //                 'phone' => $phoneNumber,
-                        //                 'trans_token' => $transToken,
-                        //                 'trans_ref' => $transRef,
-                        //                 'meter_number' => $meter_number,
-                        //                 'amount' => $userinput,
-                        //             ]);
-
-                        //             $response = "If you didn't receive a push prompt please enter *182*7*1# then MoMo PIN to continue";
-                        //             $this->ussd_stop($response);
-                        //         } elseif ($status == 130 && !$success) {
-                        //             $response = "Not charged. Please try again  \n";
-                        //             $this->ussd_stop($response);
-                        //         } else {
-                        //             $response = "server not reachable . Please try again. \n";
-                        //             $this->ussd_stop($response);
-                        //         }
-
-                        //     } else {
-                        //         $response = "Ooops not work. Please try again. \n";
-                        //         $this->ussd_stop($response);
-                        //     }
-
-                        // }
-
                         $this->pay_electricity($meter_number);
 
                     } elseif (count($inputArray) == 3 && $this->userinput == '2') {
@@ -149,7 +89,7 @@ class UssdController extends Controller
                         if ($fetch['success']) {
                             $meter = $fetch['meter'];
                             $name = $fetch['name'];
-                            $response = $meter . " Name on meter $name \n";
+                            $response = "$meter Name on meter $name \n";
                             $response .= "Enter amount (min. 100 RWF):  " . "\n";
                             $this->ussd_proceed($response);
                         } else {
@@ -175,10 +115,7 @@ class UssdController extends Controller
 
                     } elseif (count($inputArray) == 4 && $this->userinput == '0') {
                         $this->goBack();
-                        $response = "Please choose:\n";
-                        $response .= "1) Enter meter number\n";
-                        $response .= "2) Select a saved meter\n";
-                        $this->ussd_proceed($response);
+                        $this->electricity_menu();
                     } else {
                         $response = "Invalid choice. Please try again. \n";
                         $this->ussd_stop($response);
@@ -197,21 +134,53 @@ class UssdController extends Controller
                     break;
 
                 case "3":
-                    // Rent P.O Box
-                    $response = "Rent P.O Box\n";
-                    $this->ussd_proceed($response);
+                    // P.O Box Services
+                    if (count($inputArray) == 2) {
+                        $this->pobox_menu();
+                    } elseif (count($inputArray) == 3 && $this->userinput == '0') {
+                        $this->goBack();
+                        $this->home_menu();
+                    } elseif (count($inputArray) == 3 && $this->userinput == '1') {
+                        $response = "P.O box Rent \n";
+                        $response .= "0) Go Back \n";
 
-                    break;
-                case "4":
-                    // P.O Box Certificate
-                    $response = "P.O Box Certificate\n";
-                    $this->ussd_proceed($response);
+                        $this->ussd_proceed($response);
+                    } elseif (count($inputArray) == 3 && $this->userinput == '2') {
+                        $response = "P.O Box Certificate \n";
+                        $response .= "0) Go Back \n";
 
-                    break;
-                case "5":
-                    // Chech P.O Box
-                    $response = "Chech P.O Box\n";
-                    $this->ussd_proceed($response);
+                        $this->ussd_proceed($response);
+                    } elseif (count($inputArray) == 3 && $this->userinput == '3') {
+                        $response = "Chech P.O Box \n";
+                        $response .= "0) Go Back \n";
+
+                        $this->ussd_proceed($response);
+                    } elseif (count($inputArray) == 3 && $this->userinput == '4') {
+                        $response = "Provide P.O Box number \n";
+                        $this->ussd_proceed($response);
+                    }  elseif (count($inputArray) == 4) {
+                        $pob = $inputArray[3];
+                        $response = "Choose P.O Box Branch \n";
+
+                        $branches = Branch::all();
+                        foreach ($branches as $key => $branch) {
+                            $response .= $key + 1 . ")  $branch->name \n";
+                        }
+
+                        $this->ussd_proceed($response);
+                    } elseif (count($inputArray) == 5) {
+                        $pob = $inputArray[3];
+                        $branch = $inputArray[4];
+                        $response = "Choose $pob =>  $branch \n";
+
+                        $this->ussd_proceed($response);
+                    } elseif (count($inputArray) == 4 && $this->userinput == '0') {
+                        $this->goBack();
+                        $this->pobox_menu();
+                    } else {
+                        $response = "Invalid choice. Please try again. \n";
+                        $this->ussd_stop($response);
+                    }
 
                     break;
 
@@ -231,10 +200,26 @@ class UssdController extends Controller
         $response .= "Welcome to Iposita online Services \n";
         $response .= "1) Buy Electricity \n";
         $response .= "2) Buy Airtime \n";
-        $response .= "3) Rent P.O Box\n";
-        $response .= "4) P.O Box Certificate\n";
-        $response .= "5) Chech P.O Box\n";
-        return $response;
+        $response .= "3) P.O Box Services \n";
+        $this->ussd_proceed($response);
+    }
+    public function pobox_menu()
+    {
+        $response = "";
+        $response .= "1) Rent P.O Box \n";
+        $response .= "2) P.O Box Certificate \n";
+        $response .= "3) Chech P.O Box \n";
+        $response .= "4) P.O Box Registration \n";
+        $response .= "0) Go Back \n";
+        $this->ussd_proceed($response);
+    }
+    public function electricity_menu()
+    {
+        $response = "Please choose:\n";
+        $response .= "1) Enter meter number\n";
+        $response .= "2) Select a saved meter\n";
+        $response .= "0) Go Back \n";
+        $this->ussd_proceed($response);
     }
     public function check_session()
     {
