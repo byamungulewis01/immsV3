@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Eric\Out;
 use Carbon\Carbon;
 use App\Models\Box;
 use App\Models\Branch;
-use Barryvdh\DomPDF\PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 use App\Models\Outboxing;
 use Illuminate\Http\Request;
 use App\Models\Eric\Transferout;
@@ -78,7 +79,7 @@ class CNTPEmsOutboxingcontroller extends Controller
         $inboxings = Outboxing::where('pdate', $date)
             ->where('status', '3')
             ->get();
-        $pdf = \PDF::loadView('admin.cntp.dailyemscntpoutboxing', compact('date', 'inboxings', 'currentDateTime'))
+        $pdf = Pdf::loadView('admin.cntp.dailyemscntpoutboxing', compact('date', 'inboxings', 'currentDateTime'))
             ->setPaper('a4', 'portrait');
         return $pdf->stream('Dailyopeningreport.pdf');
     }

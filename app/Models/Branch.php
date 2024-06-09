@@ -14,14 +14,9 @@ class Branch extends Model
         $return = [];
 
         if ($ret == '') {
-            $return = Branch::where('status','active')
-
-                ->get()
-                ->toArray();
+            $return = Branch::where('status','active')->get()->toArray();
         } elseif ($ret == 'available') {
-            $return = Branch::where('status','active')
-                ->get()
-                ->toArray();
+            $return = Branch::where('status','active')->get()->toArray();
         }
         return $return;
     }

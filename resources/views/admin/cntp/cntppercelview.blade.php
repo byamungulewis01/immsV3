@@ -43,13 +43,6 @@
                                 <i class="ri-delete-bin-2-line"></i>
                             </button>
 
-
-
-
-                            {{-- <button type="button" class="btn btn-info">
-                                    <i class="ri-file-download-line align-bottom me-1"></i>
-                                    Import
-                                </button> --}}
                         </div>
                     </div>
                 </div>
@@ -70,8 +63,8 @@
 
                                     <th class="sort" data-sort="BRANCH">TO BRANCH</th>
                                     <th class="sort" data-sort="PHONE">MAIL NUMBER</th>
-                                    <th class="sort" data-sort="PHONE">MAIL TYPE</th>
                                     <th class="sort" data-sort="DATE">DATE</th>
+                                    <th class="sort" data-sort="STATUS">STATUS</th>
                                     <th class="sort" data-sort="action">Action</th>
                                 </tr>
                             </thead>
@@ -81,8 +74,7 @@
                                         <th scope="row">
                                           {{ $key + 1 }}
                             </th>
-                            <td class="MAIL CODE"> <a target="_blank"  href="print/mailtransfer.php"> <button  class="btn btn-dark waves-effect waves-light">DSP {{ $result->id }}</button>
-                          </td>
+                            <td class="MAIL CODE">DSP {{ $result->id }}</td>
                             <td class="MAIL CODE">
                                     {{ $result->emplo->name }}</a>
                             </td>
@@ -92,17 +84,83 @@
                             <td class="NAME">{{ $result->branches->name }}</td>
                             <td class="PHONE">{{ $result->mnumber }}</td>
 
-                            <td class="PHONE">{{strtoupper( $result->mailtype )}}</td>
 
                                 <td class="date"> {{ $result->created_at->format('d M, Y') }}</td>
-
+                                <td class="status">
+                                    @if ($result->status == 0)
+                                        <span class="badge bg-warning">Not recieved</span>
+                                    @elseif($result->status == 1)
+                                        <span class="badge bg-info">Received</span>
+                                    @else
+                                        <span class="badge bg-success">Opened & verify</span>
+                                    @endif
+                                </td>
                             <td>
                                 @if ($result->status==0)
                                 <a href="#standard-modal{{ $result->id }}" data-bs-toggle="modal" type="button"
                                 class="btn btn-primary btn-sm"><span>D.RECEIVING</span></a>
-                                @else
-                                <span class="badge bg-success">Received</span>
-                                @endif
+                                @elseif($result->status == 1)
+                                <button data-bs-toggle="modal"
+                                    data-bs-target="#verify{{ $result->id }}"class="btn btn-sm btn-success">Open
+                                    & Verify</button>
+
+                                <div class="modal fade" id="verify{{ $result->id }}" tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog model-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header p-3">
+                                                <h5 class="modal-title" id="exampleModalLabel">Opening &
+                                                    verify</h5>
+                                                <button type="button" class="btn-close"
+                                                    data-bs-dismiss="modal" aria-label="Close"
+                                                    id="close-modal"></button>
+                                            </div>
+                                            <form class="tablelist-form row" method="post"
+                                                action="{{ route('admin.outtems.verify', $result->id) }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label for="weight"
+                                                                class="form-label">Weight</label>
+                                                            <input type="number" step="0.1"
+                                                                id="weight" name="recieced_weight"
+                                                                class="form-control" placeholder="0.0"
+                                                                value="{{ old('recieced_weight') }}"
+                                                                required />
+
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="comment"
+                                                                class="form-label">Comment</label>
+                                                            <input type="text" id="comment"
+                                                                name="cntp_comment" class="form-control"
+                                                                placeholder="cntp comment"
+                                                                value="{{ old('cntp_comment') }}" />
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <div class="hstack gap-2 justify-content-end">
+                                                        <button type="button" class="btn btn-light"
+                                                            data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                        <button type="submit" class="btn btn-success">
+                                                            Submit
+                                                        </button>
+                                                        <!-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> -->
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                            @endif
 
                             <!-- Modal -->
                             <div id="standard-modal{{ $result->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">

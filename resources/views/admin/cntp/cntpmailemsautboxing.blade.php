@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">ALL EMS OUTBOXING DISPATCH RECEIVING FROM  BRANCH</h4>
+            <h4 class="mb-sm-0">ALL EMS OUTBOXING DISPATCH RECEIVING FROM BRANCHES</h4>
 
             <div class="page-title-right">
                 <ol class="breadcrumb m-0">
@@ -66,9 +66,8 @@
 
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-
-                                                <a href="{{ route('admin.outtems.viewems', ['id' => encrypt($branch->id)]) }}"><p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ $branch->name }}</p></a><br>
-                                               <b>TOTAL: {{ $data }}</b>
+                                                <a href="{{ route('admin.outtems.viewems', ['id' => encrypt($branch->id)]) }}"><p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ $branch->name }}</p></a>
+                                               <b>Total: {{ $data }}</b>
                                             </div>
 
                                         </div>

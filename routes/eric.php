@@ -467,6 +467,7 @@ Route::name('admin.')->middleware('auth')->group(function () {
         Route::get('/outbox/detailsems/{pdate}', 'dailyreout')->name('detailsems');
         Route::get('/Outboxing/ViewEMS/{id}', 'index2')->name('viewems');
         Route::put('/receiveemsout/{id}', 'update')->name('update');
+        Route::put('/receiveems-verify/{id}', 'verify')->name('verify');
     });
     Route::controller(CNTPRegisteredOutboxingcontroller::class)->name('outtregis.')->group(function () {
         Route::get('/Outboxing/receiveregistered', 'index')->name('outboxingregistered');

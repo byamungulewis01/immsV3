@@ -67,8 +67,8 @@
                                             </div>
                                             <div class="flex-grow-1 ms-3">
 
-                                                <a href="{{ route('admin.outtperc.viewpercel', ['id' => encrypt($branch->id)]) }}"><p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ $branch->name }}</p></a><br>
-                                               <b>TOTAL: {{ $data }}</b>
+                                                <a href="{{ route('admin.outtperc.viewpercel', ['id' => encrypt($branch->id)]) }}"><p class="text-uppercase fw-semibold fs-12 text-muted mb-1">{{ $branch->name }}</p></a>
+                                               <b>Total: {{ $data }}</b>
                                             </div>
 
                                         </div>

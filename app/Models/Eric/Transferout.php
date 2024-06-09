@@ -12,7 +12,7 @@ class Transferout extends Model
     use HasFactory;
     protected $fillable = [
         'fromuserid', 'status', 'rvdate', 'touserid', 'mnumber',
-        'mailtype','bid','weight','pdate'
+        'mailtype','bid','weight','pdate','recieced_weight','cntp_comment'
     ];
     public function branches()
     {
