@@ -119,8 +119,9 @@ trait UssdPayments
             }
 
     }
-    private function pay_pobox_cert($amount, $pobox)
+    private function pay_pobox_cert($pobox)
     {
+        $amount = 5000;
         $dpo = new Dpo;
             $data = [
                 'paymentAmount' => $amount,

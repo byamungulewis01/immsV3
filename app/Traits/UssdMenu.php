@@ -55,6 +55,13 @@ trait UssdMenu
         // $total = $totalRent + $box->amount * 0.25 * $pernaty;
         $this->ussd_proceed($response);
     }
+    public function certPobMenu()
+    {
+        $response = "P.O Box Certifacate (5000 FRW)\n";
+        $response .= "1) To pay certificate \n";
+        // $total = $totalRent + $box->amount * 0.25 * $pernaty;
+        $this->ussd_proceed($response);
+    }
     public function branches_menu()
     {
         $response = "Choose P.O Box Branch \n";

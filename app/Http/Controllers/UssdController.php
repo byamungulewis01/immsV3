@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Traits\UssdMenu;
 use App\Traits\UssdPayments;
 use Illuminate\Http\Request;
+use App\Models\Eric\Inboxing;
 use App\Traits\UssdFunctions;
 use App\Models\UssdMeterHistory;
+use App\Http\Controllers\NotificationController;
 
 class UssdController extends Controller
 {
-    use UssdMenu, UssdFunctions,UssdPayments;
+    use UssdMenu, UssdFunctions, UssdPayments;
     public $sessionId;
     public $phoneNumber;
     public $userInput;
@@ -143,7 +145,7 @@ class UssdController extends Controller
                         } else {
                             $pobox = $inputArray[2];
                             $branch = $inputArray[3];
-                            $box = $this->search_pobox($pobox,$branch);
+                            $box = $this->search_pobox($pobox, $branch);
                             $amount = $this->pobox_amount($box);
                             if (!$amount) {
                                 $response = "Invalid choice. Please try again. \n";
@@ -155,7 +157,7 @@ class UssdController extends Controller
                     } elseif (count($inputArray) == 6) {
                         $pobox = $inputArray[3];
                         $branch = $inputArray[4];
-                        $box = $this->search_pobox($pobox,$branch);
+                        $box = $this->search_pobox($pobox, $branch);
                         $amount = $this->pobox_amount($box);
                         if (!$amount) {
                             $response = "Invalid choice. Please try again. \n";
@@ -164,6 +166,81 @@ class UssdController extends Controller
                             $this->pay_pobox_rent($amount, $box);
 
                         }
+                    }
+                    break;
+                case "4":
+                    if (count($inputArray) == 2) {
+                        $this->rentPobOptionsMenu();
+                    } elseif (count($inputArray) == 3) {
+                        if ($this->my_pobox() && $this->userInput == 1) {
+                            $this->certPobMenu();
+                        } elseif ($this->my_pobox() && $this->userInput == 2) {
+                            $response = "Enter P.O Box number\n";
+                            $this->ussd_proceed($response);
+                        } elseif ($this->my_pobox() && $this->userInput == 0) {
+                            $this->goBack();
+                            $this->home_menu();
+                        } else {
+                            $this->branches_menu();
+                        }
+                    } elseif (count($inputArray) == 4) {
+                        if ($this->userInput == 0) {
+                            $this->goBack();
+                            $this->rentPobOptionsMenu();
+                        } elseif ($this->my_pobox() && $inputArray[2] == 1) {
+                            $box = $this->my_pobox();
+                            $this->pay_pobox_cert($box);
+                        } elseif ($this->my_pobox() && $inputArray[2] == 2) {
+                            $this->branches_menu();
+                        } else {
+                            $this->certPobMenu();
+                        }
+
+                    } elseif (count($inputArray) == 5) {
+                        if ($this->my_pobox()) {
+                            $this->certPobMenu();
+                        } else {
+                            $pobox = $inputArray[2];
+                            $branch = $inputArray[3];
+                            $box = $this->search_pobox($pobox, $branch);
+                            $this->pay_pobox_cert($box);
+                        }
+                    } elseif (count($inputArray) == 6) {
+                        $pobox = $inputArray[3];
+                        $branch = $inputArray[4];
+                        $box = $this->search_pobox($pobox, $branch);
+                        $this->pay_pobox_cert($box);
+                    }
+                    break;
+
+                case '5':
+                    if (count($inputArray) == 2) {
+                        if (!$this->my_pobox()) {
+                            $response = "You don't have any registed P.O Box\n";
+                        } else {
+                            $response = "Select P.O Box\n";
+                            $response .= "1) B.P " . $this->my_pobox()->pob . " " . $this->my_pobox()->branch->name . "\n";
+                        }
+                        $response .= "0) Go Back \n";
+                        $this->ussd_proceed($response);
+                    } elseif (count($inputArray) == 3) {
+                        if ($this->userInput == 0) {
+                            $this->goBack();
+                            $this->home_menu();
+                        } elseif ($this->my_pobox() && $this->userInput == 1) {
+                            $inboxing = Inboxing::where('pob', $this->my_pobox()->pob)->where('instatus', '4')->latest()->first();
+                            if ($inboxing) {
+                                $response = "You have mail shortly you will get SMS for more details";
+                                $message = "IPOSITA informs you that you have an item to pick at Guichet:8 code:$inboxing->innumber If you need home delivery service,please call this number 0789499177";
+                                (new NotificationController)->intouchsms($this->phoneNumber, $message);
+                            } else {
+                                $response = "Seems like you don't have any mail";
+                            }
+                        } else {
+                            $response = "Invalid choice. Please try again. \n";
+                        }
+                        $this->ussd_stop($response);
+
                     }
                     break;
 

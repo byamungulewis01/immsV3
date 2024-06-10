@@ -35,9 +35,9 @@ class UssdElectricityPaymentVerify extends Command
         $dpo = new Dpo();
         $fiveMinutesAgo = now()->subMinutes(5);
 
-        $transactions = UccdDpoTransanction::where('status', 'new')->where('created_at', '>=', $fiveMinutesAgo)->get();
+        $transactions = UccdDpoTransanction::where('service','electricity')->where('status', 'new')->where('created_at', '>=', $fiveMinutesAgo)->get();
         if ($transactions->isEmpty()) {
-            UccdDpoTransanction::where('status', 'new')->where('created_at', '<', $fiveMinutesAgo)->update(['status' => 'fail']);
+            UccdDpoTransanction::where('service','electricity')->where('status', 'new')->where('created_at', '<', $fiveMinutesAgo)->update(['status' => 'fail']);
         } else {
             foreach ($transactions as $transaction) {
                 $transToken = $transaction->trans_token;
@@ -55,7 +55,7 @@ class UssdElectricityPaymentVerify extends Command
             }
         }
 
-        $this->info('notify client');
+        // $this->info('notify client');
 
     }
 
