@@ -28,29 +28,32 @@ trait UssdMenu
     }
     public function rentPobMenu($box)
     {
-        $rentYearNumber = now()->year - $box->year;
-        $totalRent = $box->amount * $rentYearNumber;
-        $response = "Select option to pay";
+
+        $response = "Select option to pay \n";
+        $totalRent = $box->amount * (now()->year - $box->year);
+        $pernaty = now()->year - $box->year;
+        $total = $totalRent + ($box->amount * 0.25 * $pernaty);
+
         if (now()->month == 1 && now()->day <= 31):
             if ($box->year >= now()->year):
-                $pernaty = 0;
-                $response = "1) Rent " . $box->year + 1 . " - " . $box->amount;
+                $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount . " RWF";
             else:
-                $pernaty = now()->year - ($box->year - 1);
-                $response = "1) Rent " . $box->year + 1 . " - " . $box->amount + ($box->amount * 0.25);
-                $response .= "\n 2) Pay All " . $totalRent + ($box->amount * 0.25 * $pernaty);
+                $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount + ($box->amount * 0.25) . " RWF";
+                $response .= "\n 2) Pay All " . $total . " RWF";
 
             endif;
         else:
-            $pernaty = now()->year - $box->year;
+
             if ($box->year >= now()->year):
-                $response = "1) Rent " . $box->year + 1 . " - " . $box->amount;
+                $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount . " RWF";
+            elseif ($box->year == now()->year - 1):
+                $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount + ($box->amount * 0.25) . " RWF";
             else:
-                $response = "1) Rent " . $box->year + 1 . " - " . $box->amount + ($box->amount * 0.25);
-                $response .= "\n 2) Pay All " . $totalRent + ($box->amount * 0.25 * $pernaty);
+                $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount + ($box->amount * 0.25) . " RWF";
+                $response .= "\n 2) Pay All(" . $box->year + 1 . "-" . now()->year . ") " . $total . " RWF";
             endif;
         endif;
-        $response .= "\n 0)Go Back\n";
+        // $response .= "\n 0)Go Back\n";
 
         // $total = $totalRent + $box->amount * 0.25 * $pernaty;
         $this->ussd_proceed($response);

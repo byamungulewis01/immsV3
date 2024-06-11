@@ -66,11 +66,11 @@ trait UssdPayments
 
         }
     }
-    private function pay_pobox_rent($amount, $pobox)
+    private function pay_pobox_rent($rent, $pobox)
     {
         $dpo = new Dpo;
             $data = [
-                'paymentAmount' => $amount,
+                'paymentAmount' => $rent->amount,
                 'paymentCurrency' => "RWF",
                 'customerFirstName' => $pobox->name,
                 'customerLastName' => "",
@@ -100,7 +100,8 @@ trait UssdPayments
                         'trans_token' => $transToken,
                         'trans_ref' => $transRef,
                         'box_id' => $pobox->id,
-                        'amount' => $amount,
+                        'pob_year' => $rent->year,
+                        'amount' =>  $rent->amount,
                     ]);
 
                     $response = "If you didn't receive a push prompt please enter *182*7*1# then MoMo PIN to continue";
@@ -121,7 +122,7 @@ trait UssdPayments
     }
     private function pay_pobox_cert($pobox)
     {
-        $amount = 5000;
+        $amount = 30;
         $dpo = new Dpo;
             $data = [
                 'paymentAmount' => $amount,

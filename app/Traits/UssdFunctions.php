@@ -98,46 +98,42 @@ trait UssdFunctions
     }
     private function pobox_amount($box)
     {
+        $totalRent = $box->amount * (now()->year - $box->year);
+        $pernaty = now()->year - $box->year;
+        $total = $totalRent + ($box->amount * 0.25 * $pernaty);
         if ($this->userInput == 1) {
-            if (now()->month == 1 && now()->day <= 31):
-                if ($box->year >= now()->year):
-                    $amount = $box->amount;
-                else:
-                    $amount = $box->amount + ($box->amount * 0.25);
-                endif;
-            else:
-                if ($box->year > now()->year):
-                    $amount = $box->amount;
-                else:
-                    $amount = $box->amount + ($box->amount * 0.25);
-                endif;
-            endif;
-            return $amount;
 
-        } elseif ($this->userInput == 2) {
-            $rentYearNumber = now()->year - $box->year;
-            $totalRent = $box->amount * $rentYearNumber;
             if (now()->month == 1 && now()->day <= 31):
                 if ($box->year >= now()->year):
-                    $pernaty = 0;
-                    $amount = $totalRent + ($box->amount * 0.25 * $pernaty);
+                    $amount = $box->amount;
                 else:
-                    $pernaty = now()->year - ($box->year - 1);
-                    $amount = $totalRent + ($box->amount * 0.25 * $pernaty);
+                    $amount = $box->amount + ($box->amount * 0.25);
                 endif;
             else:
-                if ($box->year > now()->year):
-                    $pernaty = 0;
-                    $amount = $totalRent + ($box->amount * 0.25 * $pernaty);
+                if ($box->year >= now()->year):
+                    $amount = $box->amount;
+                elseif ($box->year == now()->year - 1):
+                    $amount = $box->amount + ($box->amount * 0.25);
                 else:
-                    $pernaty = now()->year - $box->year;
-                    $amount = $totalRent + ($box->amount * 0.25 * $pernaty);
+                    $amount = $total;
                 endif;
             endif;
-            return $amount;
+            return (object) [
+                'status' => true,
+                'amount' => $amount,
+                'year' => $box->year + 1,
+            ];
+        } elseif ($this->userInput == 2) {
+            return (object) [
+                'status' => true,
+                'amount' => $total,
+                'year' => $box->year + 1,
+            ];
 
         } else {
-            return false;
+            return (object) [
+                'status' => false,
+            ];
         }
     }
 }

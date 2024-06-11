@@ -123,12 +123,12 @@ class UssdController extends Controller
                         } elseif ($this->my_pobox() && $inputArray[2] == 1) {
 
                             $box = $this->my_pobox();
-                            $amount = $this->pobox_amount($box);
-                            if (!$amount) {
+                            $data = $this->pobox_amount($box);
+                            if (!$data->status) {
                                 $response = "Invalid choice. Please try again. \n";
                                 $this->ussd_stop($response);
                             } else {
-                                $this->pay_pobox_rent($amount, $box);
+                                $this->pay_pobox_rent($data, $box);
                             }
 
                         } elseif ($this->my_pobox() && $inputArray[2] == 2) {
@@ -146,25 +146,25 @@ class UssdController extends Controller
                             $pobox = $inputArray[2];
                             $branch = $inputArray[3];
                             $box = $this->search_pobox($pobox, $branch);
-                            $amount = $this->pobox_amount($box);
-                            if (!$amount) {
+                            $data = $this->pobox_amount($box);
+
+                            if (!$data->status) {
                                 $response = "Invalid choice. Please try again. \n";
                                 $this->ussd_stop($response);
                             } else {
-                                $this->pay_pobox_rent($amount, $box);
+                                $this->pay_pobox_rent($data, $box);
                             }
                         }
                     } elseif (count($inputArray) == 6) {
                         $pobox = $inputArray[3];
                         $branch = $inputArray[4];
                         $box = $this->search_pobox($pobox, $branch);
-                        $amount = $this->pobox_amount($box);
-                        if (!$amount) {
+                        $data = $this->pobox_amount($box);
+                        if (!$data->status) {
                             $response = "Invalid choice. Please try again. \n";
                             $this->ussd_stop($response);
                         } else {
-                            $this->pay_pobox_rent($amount, $box);
-
+                            $this->pay_pobox_rent($data, $box);
                         }
                     }
                     break;

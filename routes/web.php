@@ -1,28 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EuclController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\WalletContoller;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminPobController;
-use App\Http\Controllers\Admin\BoxController;
-use App\Http\Controllers\Admin\RolesController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\EuclReportsController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\Admin\BranchController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\EmployeeController;
-use App\Http\Controllers\Auth\AdminAuthController;
-use App\Http\Controllers\DPOIntegrationController;
-use App\Http\Controllers\Admin\AdminDashController;
-use App\Http\Controllers\Admin\PermissionsController;
-use App\Http\Controllers\Auth\CustomerAuthController;
-use App\Http\Controllers\Admin\SendDispatchController;
 use App\Http\Controllers\Admin\AdminAddressingController;
+use App\Http\Controllers\Admin\AdminDashController;
+use App\Http\Controllers\Admin\BoxController;
+use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DispatchInvoiceController;
+use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\PermissionsController;
+use App\Http\Controllers\Admin\RolesController;
+use App\Http\Controllers\Admin\SendDispatchController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\DPOIntegrationController;
+use App\Http\Controllers\EuclController;
+use App\Http\Controllers\EuclReportsController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\WalletContoller;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,21 +213,12 @@ Route::name('admin.')->middleware('auth')->group(function () {
         Route::get("/monthly-all-transactions", 'monthly_all_transactions')->name("monthly_all_transactions");
     });
 
-
-
-
     // change password
     Route::get('/change-password', [AdminAuthController::class, 'changePassword'])->name('changePassword');
     Route::put('/change-password/{id}', [AdminAuthController::class, 'changePasswordStore'])->name('changePasswordStore');
 
     //    Logout
     Route::get('/logout', [LogoutController::class, 'adminLogout'])->name('logout');
-
-
-
-
-
-
 
     Route::controller(DPOIntegrationController::class)->name('dpo.')->prefix('dpo-integration')->group(function () {
         Route::get('/', 'index')->name('index');
@@ -239,7 +230,7 @@ Route::name('admin.')->middleware('auth')->group(function () {
 });
 
 Route::get('/test_sms', function () {
-   $sent = (new NotificationController)->send_sms("Testing Now","0785436135");
+    $sent = (new NotificationController)->send_sms("0785436135", "Testing Now");
     return $sent;
 });
 
