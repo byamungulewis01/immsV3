@@ -37,13 +37,13 @@ trait UssdMenu
         if (now()->month == 1 && now()->day <= 31):
             if ($box->year >= now()->year):
                 $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount . " RWF";
+            elseif ($box->year == now()->year - 1):
+                $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount . " RWF";
             else:
                 $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount + ($box->amount * 0.25) . " RWF";
                 $response .= "\n 2) Pay All " . $total . " RWF";
-
             endif;
         else:
-
             if ($box->year >= now()->year):
                 $response .= "1) Rent(" . $box->year + 1 . ") " . $box->amount . " RWF";
             elseif ($box->year == now()->year - 1):
