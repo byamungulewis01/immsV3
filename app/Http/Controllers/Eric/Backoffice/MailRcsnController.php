@@ -62,7 +62,7 @@ class MailRcsnController extends Controller
             'mailtype' => $request->mailtype,
             'weight' => $request->weight,
         ]);
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         if ($request->mailtype == 'r') {
             $gu = 6;
         } elseif ($request->mailtyp == 'o') {

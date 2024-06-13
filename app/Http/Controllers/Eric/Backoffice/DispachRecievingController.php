@@ -103,7 +103,7 @@ class DispachRecievingController extends Controller
         if ($request->closes == '1') {
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have  an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -169,7 +169,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -232,7 +232,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA  $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -295,7 +295,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -358,7 +358,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -421,7 +421,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -485,7 +485,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -548,7 +548,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -610,7 +610,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";
@@ -673,7 +673,7 @@ class DispachRecievingController extends Controller
             $transfer = DB::table('transfers')->where('id', $request->trid)->update(['status' => '1']);
         }
 
-        $receiver = '+25' . $request->phone;
+        $receiver = $request->phone;
         $gu = 8;
 
         $message = "IPOSITA $request->branch BRANCH informs you that you have an item to pick at Guichet:$gu code:$innumber-$request->akabati If you need home delivery service,please call this number $phone";

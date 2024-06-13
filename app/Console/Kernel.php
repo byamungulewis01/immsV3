@@ -13,9 +13,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('ussd:electricity-payment-verify')->everyMinute();
-        $schedule->command('ussd:cert-pobox-payment')->everyMinute();
-        $schedule->command('ussd:rent-pobox-payment')->everyMinute();
+        $schedule->command('ussd:electricity-payment-verify')->everyTenSeconds();
+        $schedule->command('ussd:cert-pobox-payment')->everyThirtySeconds();
+        $schedule->command('ussd:rent-pobox-payment')->everyThirtySeconds();
     }
 
     /**

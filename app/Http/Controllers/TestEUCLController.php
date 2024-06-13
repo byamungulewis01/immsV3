@@ -94,13 +94,14 @@ class TestEUCLController extends Controller
         ];
 
         $response2 = Http::withoutVerifying()->post('https://10.20.120.129:443/test/vendor.ws', $data);
-        if ($response2->ok()) {
-            $json_data = json_decode($response2);
-            if ($json_data->response->body) {
-                return \response()->json($json_data->response->body[0], 200);
-            } else {
-                return \response()->json("notFound", 200);
-            }
-        }
+        return $response2;
+            // if ($response2->ok()) {
+        //     $json_data = json_decode($response2);
+        //     if ($json_data->response->body) {
+        //         return \response()->json($json_data->response->body[0], 200);
+        //     } else {
+        //         return \response()->json("notFound", 200);
+        //     }
+        // }
     }
 }

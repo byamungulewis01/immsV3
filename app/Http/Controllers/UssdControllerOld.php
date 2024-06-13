@@ -430,7 +430,7 @@ class UssdController extends Controller
     private function pay_electricity($meter_number)
     {
         $dpo = new Dpo;
-        if (!$this->validateAmount($this->userInput, 100)) {
+        if (!$this->validateAmount($this->userInput, 500)) {
             $response = "Invalid amount. Please try again.";
             $this->ussd_stop($response);
         } else {

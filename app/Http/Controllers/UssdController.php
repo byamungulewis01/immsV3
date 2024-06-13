@@ -46,7 +46,7 @@ class UssdController extends Controller
                         if ($this->userInput == 1) {
                             $latest_meter = $this->latest_meter();
                             $response = "Name on Meter : $latest_meter->meter_name \n";
-                            $response .= "Enter amount (min. 100 RWF):  " . "\n";
+                            $response .= "Enter amount (min. 500 RWF):  " . "\n";
 
                             $this->ussd_proceed($response);
 
@@ -64,7 +64,7 @@ class UssdController extends Controller
                                     ]);
 
                                     $response = "Name on meter : $meter_name" . "\n";
-                                    $response .= "Enter amount (min. 100 RWF):  " . "\n";
+                                    $response .= "Enter amount (min. 500 RWF):  " . "\n";
                                     $this->ussd_proceed($response);
                                 } elseif ($status == 2) {
                                     $response = "Meter not found. Please check your meter number \n";
@@ -232,7 +232,8 @@ class UssdController extends Controller
                             if ($inboxing) {
                                 $response = "You have mail shortly you will get SMS for more details";
                                 $message = "IPOSITA informs you that you have an item to pick at Guichet:8 code:$inboxing->innumber If you need home delivery service,please call this number 0789499177";
-                                (new NotificationController)->intouchsms($this->phoneNumber, $message);
+                                $phone = substr($this->phoneNumber, 2);
+                                (new NotificationController)->send_sms($phone, $message);
                             } else {
                                 $response = "Seems like you don't have any mail";
                             }
