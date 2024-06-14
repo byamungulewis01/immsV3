@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\NotificationController;
+use App\Models\Eric\Inboxing;
+use App\Models\UssdLanguege;
+use App\Models\UssdMeterHistory;
+use App\Traits\UssdFunctions;
 use App\Traits\UssdMenu;
 use App\Traits\UssdPayments;
 use Illuminate\Http\Request;
-use App\Models\Eric\Inboxing;
-use App\Traits\UssdFunctions;
-use App\Models\UssdMeterHistory;
-use App\Http\Controllers\NotificationController;
 
 class UssdController extends Controller
 {
@@ -16,6 +17,7 @@ class UssdController extends Controller
     public $sessionId;
     public $phoneNumber;
     public $userInput;
+    public $language;
     public function ussd(Request $request)
     {
         $this->sessionId = $request->sessionId;
@@ -23,6 +25,9 @@ class UssdController extends Controller
         $this->userInput = $request->text;
         $serviceCode = $request->serviceCode;
         $networkCode = $request->networkCode;
+
+        $lang = UssdLanguege::where('phone', $this->phoneNumber)->first();
+        $this->language = $lang ? $lang->name : 'english';
 
         $text = $this->check_session();
         if ($text == "192") {
@@ -34,19 +39,36 @@ class UssdController extends Controller
                     // Buy Electricity
                     if (count($inputArray) == 2) {
                         $latest_meter = $this->latest_meter();
-                        if ($latest_meter) {
-                            $response = "Choose a meter\n";
-                            $response .= "1)$latest_meter->meter_number \n";
-                            $response .= "Or write a new meter\n";
+                        if ($this->language == 'english') {
+                            $choose = "Choose a meter\n";
+                            $orWrite = "Or write a new meter\n";
+                            $meterwr = "write meter number\n";
                         } else {
-                            $response = "write meter number\n";
+                            $choose = "Hitamo Cashpower yawe\n";
+                            $orWrite = "Cywangwa andika Cashpower yawe\n";
+                            $meterwr = "Andika Cashpower yawe\n";
+                        }
+                        if ($latest_meter) {
+                            $response = $choose;
+                            $response .= "1)$latest_meter->meter_number \n";
+                            $response .= $orWrite;
+                        } else {
+                            $response = $meterwr;
                         }
                         $this->ussd_proceed($response);
                     } elseif (count($inputArray) == 3) {
                         if ($this->userInput == 1) {
                             $latest_meter = $this->latest_meter();
-                            $response = "Name on Meter : $latest_meter->meter_name \n";
-                            $response .= "Enter amount (min. 500 RWF):  " . "\n";
+                            if ($this->language == 'english') {
+                                $nameOf = "Name on Meter";
+                                $amountEx = "Enter amount (min. 500 RWF)";
+                            } else {
+                                $nameOf = "Amazina :";
+                                $amountEx = "Andika Amafaranga (amake ni 500 RWF)";
+                            }
+
+                            $response = "$nameOf : $latest_meter->meter_name \n";
+                            $response .= "$amountEx : " . "\n";
 
                             $this->ussd_proceed($response);
 
@@ -63,19 +85,39 @@ class UssdController extends Controller
                                         'meter_name' => $meter_name,
                                     ]);
 
-                                    $response = "Name on meter : $meter_name" . "\n";
-                                    $response .= "Enter amount (min. 500 RWF):  " . "\n";
+                                    if ($this->language == 'english') {
+                                        $nameOf = "Name on Meter";
+                                        $amountEx = "Enter amount (min. 500 RWF)";
+                                    } else {
+                                        $nameOf = "Amazina";
+                                        $amountEx = "Andika Amafaranga (amake ni 500 RWF)";
+                                    }
+
+                                    $response = "$nameOf : $meter_name" . "\n";
+                                    $response .= "$amountEx :  " . "\n";
                                     $this->ussd_proceed($response);
                                 } elseif ($status == 2) {
-                                    $response = "Meter not found. Please check your meter number \n";
+                                    if ($this->language == 'english') {
+                                        $response = "Meter not found. Please check your meter number \n";
+                                    } else {
+                                        $response = "Numero ntibonetse, reba nimero yawe neza \n";
+                                    }
                                     $this->ussd_stop($response);
                                 } else {
-                                    $response = "server not reachable . Please try again. \n";
+                                    if ($this->language == 'english') {
+                                        $response = "server not reachable . Please try again. \n";
+                                    } else {
+                                        $response = "Ntago bikunze, ongera nanone";
+                                    }
                                     $this->ussd_stop($response);
                                 }
 
                             } else {
-                                $response = "Meter should be numeric. Please try again. \n";
+                                if ($this->language == 'english') {
+                                    $response = "Meter should be numeric. Please try again. \n";
+                                } else {
+                                    $response = "Numero igomba kuba imibare gusa, ongera ugerageze \n";
+                                }
                                 $this->ussd_stop($response);
                             }
                         }
@@ -93,9 +135,15 @@ class UssdController extends Controller
 
                 case "2":
                     // Buy Airtime
-                    $response = "Buying Aitime\n";
-                    $response .= "\n 1)Buy for your self";
-                    $response .= "\n 2)Buy for  Another";
+                    if ($this->language == 'english') {
+                        $response = "Buying Aitime\n";
+                        $response .= "\n 1)Buy for your self";
+                        $response .= "\n 2)Buy for  Another";
+                    } else {
+                        $response = "Kugura Amainite \n";
+                        $response .= "\n 1)Kwigurira";
+                        $response .= "\n 2)Kugurira undi";
+                    }
 
                     $this->ussd_stop($response);
                     break;
@@ -108,7 +156,11 @@ class UssdController extends Controller
                             $box = $this->my_pobox();
                             $this->rentPobMenu($box);
                         } elseif ($this->my_pobox() && $this->userInput == 2) {
-                            $response = "Enter P.O Box number\n";
+                            if ($this->language == 'english') {
+                                $response = "Enter P.O Box number\n";
+                            } else {
+                                $response = "Andika numero yakabati\n";
+                            }
                             $this->ussd_proceed($response);
                         } elseif ($this->my_pobox() && $this->userInput == 0) {
                             $this->goBack();
@@ -125,7 +177,11 @@ class UssdController extends Controller
                             $box = $this->my_pobox();
                             $data = $this->pobox_amount($box);
                             if (!$data->status) {
-                                $response = "Invalid choice. Please try again. \n";
+                                if ($this->language == 'english') {
+                                    $response = "Invalid choice. Please try again. \n";
+                                } else {
+                                    $response = "Uhisemo nabi! ongera nanone";
+                                }
                                 $this->ussd_stop($response);
                             } else {
                                 $this->pay_pobox_rent($data, $box);
@@ -149,7 +205,12 @@ class UssdController extends Controller
                             $data = $this->pobox_amount($box);
 
                             if (!$data->status) {
-                                $response = "Invalid choice. Please try again. \n";
+                                if ($this->language == 'english') {
+                                    $response = "Invalid choice. Please try again. \n";
+                                } else {
+                                    $response = "Uhisemo nabi! ongera nanone";
+                                }
+
                                 $this->ussd_stop($response);
                             } else {
                                 $this->pay_pobox_rent($data, $box);
@@ -161,7 +222,11 @@ class UssdController extends Controller
                         $box = $this->search_pobox($pobox, $branch);
                         $data = $this->pobox_amount($box);
                         if (!$data->status) {
-                            $response = "Invalid choice. Please try again. \n";
+                            if ($this->language == 'english') {
+                                $response = "Invalid choice. Please try again. \n";
+                            } else {
+                                $response = "Uhisemo nabi! ongera nanone";
+                            }
                             $this->ussd_stop($response);
                         } else {
                             $this->pay_pobox_rent($data, $box);
@@ -175,7 +240,11 @@ class UssdController extends Controller
                         if ($this->my_pobox() && $this->userInput == 1) {
                             $this->certPobMenu();
                         } elseif ($this->my_pobox() && $this->userInput == 2) {
-                            $response = "Enter P.O Box number\n";
+                            if ($this->language == 'english') {
+                                $response = "Enter P.O Box number\n";
+                            } else {
+                                $response = "Andika numero yakabati\n";
+                            }
                             $this->ussd_proceed($response);
                         } elseif ($this->my_pobox() && $this->userInput == 0) {
                             $this->goBack();
@@ -216,12 +285,24 @@ class UssdController extends Controller
                 case '5':
                     if (count($inputArray) == 2) {
                         if (!$this->my_pobox()) {
-                            $response = "You don't have any registed P.O Box\n";
+                            if ($this->language == 'english') {
+                                $response = "You don't have any registed P.O Box\n";
+                            } else {
+                                $response = "Nta P.O Box ikwanditseho\n";
+                            }
                         } else {
-                            $response = "Select P.O Box\n";
+                            if ($this->language == 'english') {
+                                $response = "Select P.O Box\n";
+                            } else {
+                                $response = "Hitamo P.O Box\n";
+                            }
                             $response .= "1) B.P " . $this->my_pobox()->pob . " " . $this->my_pobox()->branch->name . "\n";
                         }
-                        $response .= "0) Go Back \n";
+                        if ($this->language == 'english') {
+                            $response .= "0) Go Back \n";
+                        } else {
+                            $response .= "Subira inyuma\n";
+                        }
                         $this->ussd_proceed($response);
                     } elseif (count($inputArray) == 3) {
                         if ($this->userInput == 0) {
@@ -230,12 +311,20 @@ class UssdController extends Controller
                         } elseif ($this->my_pobox() && $this->userInput == 1) {
                             $inboxing = Inboxing::where('pob', $this->my_pobox()->pob)->where('instatus', '4')->latest()->first();
                             if ($inboxing) {
+                                if ($this->language == 'english') {
                                 $response = "You have mail shortly you will get SMS for more details";
+                                } else {
+                                    $response = "Ufite ubutumwa, urabona SMS ibugaragaza";
+                                }
                                 $message = "IPOSITA informs you that you have an item to pick at Guichet:8 code:$inboxing->innumber If you need home delivery service,please call this number 0789499177";
                                 $phone = substr($this->phoneNumber, 2);
                                 (new NotificationController)->send_sms($phone, $message);
                             } else {
-                                $response = "Seems like you don't have any mail";
+                                if ($this->language == 'english') {
+                                    $response = "Seems like you don't have any mail";
+                                } else {
+                                    $response = "Nta butumwa ufitemo";
+                                }
                             }
                         } else {
                             $response = "Invalid choice. Please try again. \n";
@@ -243,6 +332,21 @@ class UssdController extends Controller
                         $this->ussd_stop($response);
 
                     }
+                    break;
+
+                case '6':
+                    $lang = UssdLanguege::where('phone', $this->phoneNumber)->first();
+                    if ($lang) {
+
+                        $newLang = $lang->name == 'english' ? 'kinyarwanda' : 'english';
+                        $lang->update(['name' => $newLang]);
+                        $this->language = $newLang;
+                    } else {
+                        UssdLanguege::create(['phone' => $this->phoneNumber, 'name' => 'kinyarwanda']);
+                        $this->language = 'kinyarwanda';
+                    }
+                    $this->goHome();
+                    $this->home_menu();
                     break;
 
                 default:

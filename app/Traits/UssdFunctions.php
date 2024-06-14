@@ -28,6 +28,12 @@ trait UssdFunctions
         $session->update(['user_input' => $user_input]);
         return true;
     }
+    public function goHome()
+    {
+        $session = UssdSession::where('phone', $this->phoneNumber)->where('session_id', $this->sessionId)->first();
+        $session->update(['user_input' => 192]);
+        return true;
+    }
     public function check_session()
     {
         $check = UssdSession::where('phone', $this->phoneNumber)->where('session_id', $this->sessionId)->first();
@@ -87,12 +93,21 @@ trait UssdFunctions
             if ($box) {
                 $this->rentPobMenu($box);
             } else {
-                $response = "P.O box not found. \n";
+                if ($this->language == 'english') {
+                    $response = "P.O box not found. \n";
+                }else{
+                    $response = "Akabati ntikabonetse. \n";
+                }
+
                 $this->ussd_stop($response);
             }
 
         } else {
-            $response = "Invalid choice. Please try again. \n";
+            if ($this->language == 'english') {
+                $response = "Invalid choice. Please try again. \n";
+            }else{
+                $response = "Ntibikunze , Ongera ugerageze. \n";
+            }
             $this->ussd_stop($response);
         }
     }
