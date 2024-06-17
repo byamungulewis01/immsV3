@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Zepson\Dpo\Dpo;
-use App\Models\PobPay;
-use Illuminate\Console\Command;
-use App\Models\UccdDpoTransanction;
 use App\Http\Controllers\NotificationController;
+use App\Models\PobPay;
+use App\Models\UccdDpoTransanction;
+use Illuminate\Console\Command;
+use Zepson\Dpo\Dpo;
 
 class UssdCertPoboxPayment extends Command
 {
@@ -51,7 +51,12 @@ class UssdCertPoboxPayment extends Command
                         'payment_ref' => $transToken,
                     ]);
                     UccdDpoTransanction::where('trans_token', $transToken)->update(['status' => 'success']);
+
+                    $hashids = new \Hashids\Hashids(env('HASHIDS_SALT'), 8); // minimum length of 8 characters
+                    $encode = $hashids->encode($transaction->box_id);
+
                     $message = "Payment of P.O box Certificate has been successfully";
+                    $message .= "Download vie " . route('certificate', $encode);
                     $phone = substr($transaction->phone, 2);
                     (new NotificationController)->send_sms($phone, $message);
                 }

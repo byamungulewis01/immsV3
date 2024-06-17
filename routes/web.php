@@ -38,7 +38,8 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'guest'], function () {
     // Customer Login
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::post('/ussd', [HomeController::class, 'ussd'])->name('ussd');
+    Route::get('/inboxing-mails/{id}', [HomeController::class, 'inboxings_mails'])->name('inboxings_mails');
+    Route::get('/certificate/{id}', [HomeController::class, 'certificate'])->name('certificate');
     Route::get('/register', [HomeController::class, 'register'])->name('register');
 
     Route::prefix('customer')->name('customer.')->group(function () {

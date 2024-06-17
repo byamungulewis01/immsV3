@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\NotificationController;
-use App\Models\Eric\Inboxing;
-use App\Models\UssdLanguege;
-use App\Models\UssdMeterHistory;
-use App\Traits\UssdFunctions;
 use App\Traits\UssdMenu;
+use App\Models\UssdLanguege;
 use App\Traits\UssdPayments;
 use Illuminate\Http\Request;
+use App\Models\Eric\Inboxing;
+use App\Traits\UssdFunctions;
+use App\Models\UssdMeterHistory;
+use Illuminate\Support\Facades\Crypt;
+use App\Http\Controllers\NotificationController;
 
 class UssdController extends Controller
 {
@@ -283,6 +284,7 @@ class UssdController extends Controller
                     break;
 
                 case '5':
+
                     if (count($inputArray) == 2) {
                         if (!$this->my_pobox()) {
                             if ($this->language == 'english') {
@@ -309,14 +311,33 @@ class UssdController extends Controller
                             $this->goBack();
                             $this->home_menu();
                         } elseif ($this->my_pobox() && $this->userInput == 1) {
-                            $inboxing = Inboxing::where('pob', $this->my_pobox()->pob)->where('instatus', '4')->latest()->first();
-                            if ($inboxing) {
+                            $inboxings = Inboxing::where('pob', $this->my_pobox()->pob)->where('instatus', '4')->get();
+
+                            if ($inboxings->count() > 0) {
                                 if ($this->language == 'english') {
-                                $response = "You have mail shortly you will get SMS for more details";
+                                    $response = "You have mail shortly you will get SMS for more details";
                                 } else {
                                     $response = "Ufite ubutumwa, urabona SMS ibugaragaza";
                                 }
-                                $message = "IPOSITA informs you that you have an item to pick at Guichet:8 code:$inboxing->innumber If you need home delivery service,please call this number 0789499177";
+                                $message = "IPOSITA informs you that you have an item to pick at \n\n";
+                                foreach ($inboxings as $value) {
+                                    if ($value->mailtype == 'ems') {
+                                        $guichet = "Guichet:8";
+                                    } elseif ($value->mailtype == 'p') {
+                                        $guichet = "Guichet:6";
+                                    } else {
+                                        $guichet = "Guichet:4";
+                                    }
+                                    $message .= $guichet . " code:$value->innumber";
+                                }
+
+                                $hashids = new \Hashids\Hashids(env('HASHIDS_SALT'), 8); // minimum length of 8 characters
+                                $hash = $hashids->encode($this->my_pobox()->pob);
+                                // $userId = $hashids->decode($hash);
+
+                                $message .= "\n If you need home delivery service,please call this number 0789499177";
+                                $message .= "\n view details here: " . route('inboxings_mails',$hash);
+
                                 $phone = substr($this->phoneNumber, 2);
                                 (new NotificationController)->send_sms($phone, $message);
                             } else {

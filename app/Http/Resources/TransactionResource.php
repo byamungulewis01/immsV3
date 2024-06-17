@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
@@ -16,14 +18,14 @@ class TransactionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'customer_name' => $this->customer_name,
-            'customer_phone' => $this->customer_phone,
-            'customer_email' => $this->customer_email,
-            'reference_number' => $this->reference_number,
-            'amount' => $this->amount,
+            'name' => $this->name,
+            'chuk_id' => $this->chuk_id,
+            'gender' => ($this->gender == 'male') ? 'Male' : 'Female',
+            'dateOfBirth' => $this->dateOfBirth,
+            'district_id' => DB::table('rwanda_addresses')->where('dist_id',$this->district_id)->select('dist_id','district')->get(),
+            'sector_id' => DB::table('rwanda_addresses')->where('sect_id',$this->sector_id)->select('sect_id','sector')->get(),
             'status' => $this->status,
-            'token' => $this->token,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'user_id' => User::find( $this->user_id),
         ];
     }
 }

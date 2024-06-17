@@ -3,6 +3,7 @@
 namespace App\Models\Eric;
 
 use App\Models\Branch;
+use App\Models\Country;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,5 +22,9 @@ class Inboxing extends Model
     public function branches()
     {
         return $this->belongsTo(Branch::class,'pob_bid');
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'orgcountry', 'c_id');
     }
 }
