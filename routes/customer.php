@@ -30,6 +30,7 @@ Route::middleware('customer')->group(function () {
         Route::get('/physical-pob/{id}', 'physicalPobDetails')->name('physicalPob.details');
         Route::get('/preforma/{id}', 'preforma')->name('preforma');
         Route::get('/invoice/{id}', 'invoice')->name('invoice');
+        Route::get('/certificate/{id}', 'certificate')->name('certificate');
 
         Route::post('/virtualPayment', 'virtualPayment')->name('virtualPayment');
         Route::post('/physicalPayment', 'physicalPayment')->name('physicalPayment');

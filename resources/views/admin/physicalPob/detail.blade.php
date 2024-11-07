@@ -650,7 +650,8 @@
                                         <th>P.O.B Certificate</th>
                                         <td class="names">
                                             @if (App\Models\PobPay::where('box_id', $box->id)->where('payment_type', 'cert')->first())
-                                                <a class="btn btn-sm btn-primary" href="{{ route('physicalPob.certificate', $box->id) }}"
+                                                <a class="btn btn-sm btn-primary"
+                                                    href="{{ route('physicalPob.certificate', $box->id) }}"
                                                     target="_blank">View</a>
                                             @else
                                                 <span class="badge bg-danger">Not Paid</span>
@@ -717,6 +718,8 @@
                                                         <a href="{{ route('physicalPob.preforma', $box->id) }}"
                                                             type="submit" class="btn btn-sm btn-primary" target="_black">Get
                                                             Bill</a>
+                                                        <a href="" type="submit" class="btn btn-sm btn-info"
+                                                            data-bs-toggle="modal" data-bs-target="#sendSms">Send SMS</a>
                                                     @else
                                                         <a href="" type="submit" class="btn btn-sm btn-primary"
                                                             data-bs-toggle="modal" data-bs-target="#proforma">Generate</a>
@@ -766,6 +769,52 @@
 
         </div>
         <!--end col-->
+    </div>
+    <div class="modal fade" id="sendSms" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-light p-3">
+                    <h5 class="modal-title" id="exampleModalLabel">PREFORM NOTIFICATION </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="close-modal"></button>
+                </div>
+                <form method="post" action="{{ route('physicalPob.preformNotify', $box->id) }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <p><strong>Opps Something went wrong</strong></p>
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>* {{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <label for="mobile_number" class="form-label">Mobile Number</label>
+                                <input type="text" class="form-control" id="mobile_number" name="mobile_number"
+                                    value="{{ old('mobile_number', $box->phone) }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="submit" class="btn btn-success" id="add-btn">
+                                Send Message
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection
 

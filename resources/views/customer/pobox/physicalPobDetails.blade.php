@@ -412,7 +412,7 @@ if (now()->month == 1 && now()->day <= 31): if ($box->year == now()->year):
                                 </thead>
                                 <tbody class="list form-check-all">
                                     <tr>
-                                        <th>ID / Certificate</th>
+                                        <th>ID Docs</th>
                                         <td class="names">
                                             {{-- attachment if is null --}}
                                             @if ($box->attachment == null)
@@ -422,6 +422,17 @@ if (now()->month == 1 && now()->day <= 31): if ($box->year == now()->year):
                                             <a href="{{ route('customer.physicalPob.download',$box->attachment) }}">View</a>
                                             @endif
 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>P.O.B Certificate</th>
+                                        <td class="names">
+                                            @if (App\Models\PobPay::where('box_id', $box->id)->where('payment_type', 'cert')->first())
+                                                <a class="btn btn-sm btn-primary" href="{{ route('customer.certificate', $box->id) }}"
+                                                    target="_blank">View</a>
+                                            @else
+                                                <span class="badge bg-danger">Not Paid</span>
+                                            @endif
                                         </td>
                                     </tr>
                                     @if ($box->aprooved == 1)

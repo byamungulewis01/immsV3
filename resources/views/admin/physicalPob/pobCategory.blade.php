@@ -50,8 +50,8 @@
                             <th class="sort" data-sort="pob">Total PO Boxes</th>
                             <th class="sort" data-sort="size">Renewed</th>
                             <th class="sort" data-sort="cotion">Not renewed</th>
-                            <th class="sort" data-sort="amount"> Total BP renewed</th>
-                            <th class="sort" data-sort="action">Total BP not renewed</th>
+                            {{-- <th class="sort" data-sort="amount"> Total BP renewed</th>
+                            <th class="sort" data-sort="action">Total BP not renewed</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -66,8 +66,6 @@
                             <td>{{ $box->total }}</td>
                             <td>{{ $box->totalrenew }}</td>
                             <td>{{ $box->totalavailable }}</td>
-                            <td></td>
-                            <td></td>
                         </tr>
                         @php
                         $total = $box->total + $total;
@@ -83,10 +81,6 @@
                             <td>{{ $total }}</td>
                             <td>{{ $totalrenew }}</td>
                             <td>{{ $totalavailable }}</td>
-                            <td></td>
-                            <td></td>
-
-
                         </tr>
                     </tfoot>
                 </table>
@@ -116,10 +110,50 @@
 </script>
 
 <script>
- $(document).ready(function () {
-    $('#datatableAjax').DataTable({
-        scrollX: true,
+    $(document).ready(function () {
+        $('#datatableAjax').DataTable({
+            pageLength: 100,
+            dom: 'Bfrtip', // Enables the buttons to appear above the table
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export Total P.O.B',
+                    className: 'btn btn-primary',
+                    title: 'Total P.O.Box',
+                    exportOptions: {
+                        columns: [0, 1]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export Renewed',
+                    className: 'btn btn-info',
+                    title: 'Renewed P.O.Box',
+                    exportOptions: {
+                        columns: [0, 2]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export Not Renewed',
+                    className: 'btn btn-info',
+                    title: 'Not Renewed P.O.Box',
+                    exportOptions: {
+                        columns: [0, 3]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Export All',
+                    className: 'btn btn-success',
+                    title: 'Full Data Export',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ]
+        });
     });
-});
 </script>
+
 @endsection

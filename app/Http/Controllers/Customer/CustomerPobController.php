@@ -240,4 +240,13 @@ class CustomerPobController extends Controller
             ->setPaper('a7', 'portrait');
         return $pdf->stream('invoice.pdf');
     }
+    public function certificate($id)
+    {
+
+        $box = Box::findorfail($id);
+
+        $pdf = Pdf::loadView('admin.physicalpob.certificate', compact('box'))
+            ->setPaper('a4', 'portrait');
+        return $pdf->stream('certificate.pdf');
+    }
 }

@@ -127,7 +127,7 @@ function convertNumber($num = false)
     </p>
   <p>
     <b>
-        {{ auth()->user()->name }}
+        {{ auth()->user()->name ?? \App\Models\User::find($item->pobBox->branch_id)->name }}
     </b> <br>
     <b>Branch Manager</b> <br><br>
     Payment should be made to the following accounts: <br>

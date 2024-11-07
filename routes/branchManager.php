@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('physicalPob/preform/{id}', 'preforma')->name('preforma');
         Route::post('physicalPob/preform/{id}', 'preformaStore')->name('preformaStore');
+        Route::post('physicalPob/preformNotify/{id}', 'preformNotify')->name('preformNotify');
         Route::get('physicalPob/pobCategory', 'pobCategory')->name('pobCategory');
 
     });

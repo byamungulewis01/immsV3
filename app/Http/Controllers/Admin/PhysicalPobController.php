@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Box;
-use App\Models\PobPay;
-use App\Models\PobBackup;
-use App\Models\PreFormaBill;
-use Illuminate\Http\Request;
-use App\Models\PobApplication;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotificationController;
+use App\Models\Box;
+use App\Models\PobApplication;
+use App\Models\PobBackup;
+use App\Models\PobPay;
+use App\Models\PreFormaBill;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PhysicalPobController extends Controller
 {
@@ -210,7 +211,6 @@ class PhysicalPobController extends Controller
         ]);
         $box = Box::find($request->pob_id);
 
-
         $field['box_id'] = $request->pob_id;
         $field['amount'] = $request->allAmount;
         $field['serviceType'] = 'PBox';
@@ -284,7 +284,7 @@ class PhysicalPobController extends Controller
             'payment_type' => 'rent',
             'payment_model' => '',
             'payment_ref' => '',
-            'bid' => auth()->user()->branch
+            'bid' => auth()->user()->branch,
         ]);
 
         return redirect()->back()->with('success', 'Pob Sold Successfully');
@@ -299,21 +299,31 @@ class PhysicalPobController extends Controller
     }
     public function dailyIncome()
     {
-        $courierPays = DB::table('pob_pays')
-            ->select(DB::raw('SUM(amount) as cash'), 'pdate')
-            ->where('bid', auth()->user()->branch)
-            ->where('serviceType', 'PBox')
-            ->groupBy('pdate')
-            ->orderBy('pdate', 'DESC')
-            ->limit(1000)
-            ->get();
+        $from = request('from') ?? null;
+        $to = request('to') ?? null;
 
-        return view('admin.physicalPob.dailyIncome', compact('courierPays'));
+        $courierPays = PobPay::where('bid', auth()->user()->branch)
+            ->where('serviceType', 'PBox')->when($from && $to, function ($query) use ($from, $to) {
+            $query->where('pdate', '>=', $from)->where('pdate', '<=', $to);
+        })->orderBy('pdate', 'DESC')->limit(value: 1000)->get();
+        // $courierPays = DB::table('pob_pays')
+        //     ->select(DB::raw('SUM(amount) as cash'), 'pdate')
+        //     ->where('bid', auth()->user()->branch)
+        //     ->where('serviceType', 'PBox')
+        //     ->when($from && $to, function ($query) use ($from, $to) {
+        //         $query->where('pdate', '>=', $from)->where('pdate', '<=', $to);
+        //     })
+        //     ->groupBy('pdate')
+        //     ->orderBy('pdate', 'DESC')
+        //     ->limit(1000)
+        //     ->get();
+
+        return view('admin.physicalPob.dailyIncome', compact('courierPays', 'from', 'to'));
     }
 
     public function monthlyIncome()
     {
-        $boxes =  PobPay::where('serviceType', 'PBox')->where('branch_id', auth()->user()->branch)
+        $boxes = PobPay::where('serviceType', 'PBox')->where('branch_id', auth()->user()->branch)
             ->select(DB::raw('SUM(amount) as cash'), DB::raw('MONTH(created_at) as created_month'), DB::raw('YEAR(created_at) as created_year'))
             ->groupBy('created_month', 'created_year')->orderBy('created_year', 'DESC')->orderBy('created_month')->limit(20)->get();
         return view('admin.physicalPob.monthlyIncome', compact('boxes'));
@@ -348,10 +358,23 @@ class PhysicalPobController extends Controller
             ->setPaper('a4', 'portrait');
         return $pdf->stream('invoice.pdf');
     }
+    public function preformNotify(Request $request, $id)
+    {
+        $box = Box::findOrFail($id);
+        $hashids = new \Hashids\Hashids(env('HASHIDS_SALT'), 8); // minimum length of 8 characters
+        $encode = $hashids->encode($id);
+
+        $message = "Dear " . $box->name;
+        $message .= "by clicking on the following link " . route('preforma', $encode) . " you can download your P.O.Box " . $box->pob . " Preform Reciept";
+        $message .= "Thank you";
+
+        (new NotificationController)->send_sms($request->mobile_number, $message);
+        return back()->with('message', 'Preform Reciept sent successfully');
+
+    }
     // preforma
     public function certificate($id)
     {
-
         $box = Box::findorfail($id);
 
         $pdf = Pdf::loadView('admin.physicalpob.certificate', compact('box'))
@@ -362,11 +385,11 @@ class PhysicalPobController extends Controller
     public function pobCategory()
     {
         $boxes = Box::where('serviceType', 'PBox')->select(
-                'pob_category',
-                DB::raw('count(*) as total'),
-                DB::raw('count(CASE WHEN available = 0 THEN 1 ELSE NULL END) as totalrenew'),
-                DB::raw('count(CASE WHEN available = 1 THEN 1 ELSE NULL END) as totalavailable')
-            )->groupBy('pob_category')->get();
+            'pob_category',
+            DB::raw('count(*) as total'),
+            DB::raw('count(CASE WHEN available = 0 THEN 1 ELSE NULL END) as totalrenew'),
+            DB::raw('count(CASE WHEN available = 1 THEN 1 ELSE NULL END) as totalavailable')
+        )->groupBy('pob_category')->get();
         return view('admin.physicalPob.pobCategory', compact('boxes'));
     }
     public function transactionpbox($pdate)

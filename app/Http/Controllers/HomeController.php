@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Box;
+use App\Models\PreFormaBill;
 use Illuminate\Http\Request;
 use App\Models\Eric\Inboxing;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -45,6 +46,16 @@ class HomeController extends Controller
         $pdf = Pdf::loadView('admin.physicalpob.certificate', compact('box'))
             ->setPaper('a4', 'portrait');
         return $pdf->stream('certificate.pdf');
+    }
+
+    public function preforma($id)
+    {
+        $decoded = $this->hashids->decode($id);
+        $item = PreFormaBill::where('box', $decoded)->latest()->first();
+
+        $pdf = Pdf::loadView('admin.physicalpob.preforma', compact('item'))
+            ->setPaper('a4', 'portrait');
+        return $pdf->stream('receipt.pdf');
     }
 
 }
