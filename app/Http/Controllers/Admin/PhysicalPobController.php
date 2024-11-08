@@ -22,8 +22,11 @@ class PhysicalPobController extends Controller
     // api for pob
     public function pobApi($id)
     {
+        $available = request('available');
         $boxes = Box::where('serviceType', 'PBox')->where('branch_id', $id)
-            ->orderBy('pob', 'asc')->get();
+            ->when($available, function ($query) use ($available) {
+                $query->where('available', $available);
+            })->orderBy('pob', 'asc')->get();
         return response()->json([
             'data' => $boxes,
             'status' => 200,
@@ -215,6 +218,7 @@ class PhysicalPobController extends Controller
         $field['amount'] = $request->allAmount;
         $field['serviceType'] = 'PBox';
         $field['bid'] = auth()->user()->branch;
+        $field['user_id'] = auth()->user()->id;
 
         if ($request->payment_year == 'all') {
             // if allAmount is 0
@@ -285,6 +289,7 @@ class PhysicalPobController extends Controller
             'payment_model' => '',
             'payment_ref' => '',
             'bid' => auth()->user()->branch,
+            'user_id' => auth()->user()->id,
         ]);
 
         return redirect()->back()->with('success', 'Pob Sold Successfully');

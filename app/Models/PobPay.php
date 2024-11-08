@@ -20,9 +20,14 @@ class PobPay extends Model
         'payment_ref',
         'serviceType',
         'bid',
+        'user_id',
     ];
 
     // function to get the box
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function box()
     {
         return $this->belongsTo(Box::class);

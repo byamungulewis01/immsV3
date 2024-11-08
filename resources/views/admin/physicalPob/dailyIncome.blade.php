@@ -71,7 +71,8 @@
                                 <th class="sort" data-sort="YEAR">YEAR</th>
                                 <th class="sort" data-sort="PAYMENT TYPE">PAYMENT TYPE</th>
                                 <th class="sort" data-sort="PAYMENT MODEL">PAYMENT MODEL</th>
-                                <th class="sort" data-sort="ACTION">AMOUNT</th>
+                                <th class="sort" data-sort="AMOUNT">AMOUNT</th>
+                                <th class="sort" data-sort="DONEBY">DONE BY</th>
 
                             </tr>
                         </thead>
@@ -87,6 +88,7 @@
                                     <td>{{ strtoupper($courierPay->payment_type) }}</td>
                                     <td>{{ strtoupper($courierPay->payment_model) }}</td>
                                     <td><b>{{ number_format($courierPay->amount) }}</b></td>
+                                    <td>{{ $courierPay->user->name }}</td>
                                 </tr>
                             @endforeach
                             {{-- @foreach ($courierPays as $key => $courierPay)
@@ -107,12 +109,6 @@
                                 </tr>
                             @endforeach --}}
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="6">Total</th>
-                                <th>{{ number_format($courierPays->sum('amount')) }}</th>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
