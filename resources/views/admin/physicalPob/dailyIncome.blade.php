@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table id="buttons-datatables" class="table nowrap align-middle" style="width:100%">
+                    <table id="datatable" class="table nowrap align-middle" style="width:100%">
                         <thead>
                             <tr>
                                 <th scope="col">
@@ -157,6 +157,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
     <script src="{{ asset('assets/js/pages/datatables.init.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#datatable').DataTable({
+                scrollX: true,
+                order: [],
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: 'Download Excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    }
+                }]
+            });
+        });
+    </script>
     {{-- <script src="{{ asset('assets/libs/@simonwep/pickr/pickr.min.js') }}"></script>
     <script src="{{ asset('assets/js/pages/form-pickers.init.js') }}"></script> --}}
 @endsection
