@@ -55,6 +55,7 @@
                                 <th class="sort" data-sort="type">TYPE</th>
                                 <th class="sort" data-sort="size">SIZE</th>
                                 <th class="sort" data-sort="date">DATE</th>
+                                <th class="sort" data-sort="paid_year">PAID YEAR</th>
                                 <th class="sort" data-sort="status"> STATUS</th>
                                 <th class="sort" data-sort="action">ACTION</th>
                             </tr>
@@ -112,6 +113,9 @@
                         data: 'date'
                     },
                     {
+                        data: 'year'
+                    },
+                    {
                         data: 'status'
                     },
                     {
@@ -125,7 +129,7 @@
                         }
                     },
                     {
-                        targets: 7,
+                        targets: 8,
                         render: function(data, type, row) {
                             // current year
                             var currentYear = new Date().getFullYear();
@@ -137,7 +141,7 @@
                         },
                     },
                     {
-                        targets: 8,
+                        targets: 9,
                         render: function(data, type, row, meta) {
                             var boxId = row.id;
                             var route1 = "{{ route('physicalPob.details', ['id' => ':id']) }}";
@@ -155,7 +159,7 @@
                     extend: 'excelHtml5',
                     text: 'Download Excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
                     }
                 }]
             });

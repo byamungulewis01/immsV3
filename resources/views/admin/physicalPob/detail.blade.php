@@ -432,6 +432,8 @@
                                             SIZE</th>
                                         <th class="sort" data-sort="date">
                                             DATE</th>
+                                        <th class="sort" data-sort="date">
+                                            PAID YEAR</th>
                                         <th class="sort" data-sort="status">
                                             STATUS</th>
                                         <th class="sort" data-sort="cotion">
@@ -448,6 +450,7 @@
                                         <td class="type">{{ $box->pob_category }}</td>
                                         <td class="size">{{ $box->size }}</td>
                                         <td class="date">{{ $box->date }}</td>
+                                        <td class="date">{{ $box->year }}</td>
                                         <td class="status">
                                             @if ($box->year >= now()->year)
                                                 <span class="badge bg-success">Paid</span>
