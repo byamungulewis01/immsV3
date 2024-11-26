@@ -23,10 +23,18 @@ class PhysicalPobController extends Controller
     public function pobApi($id)
     {
         $available = request('available');
-        $boxes = Box::where('serviceType', 'PBox')->where('branch_id', $id)
-            ->when($available, function ($query) use ($available) {
-                $query->where('available', $available);
-            })->orderBy('pob', 'asc')->get();
+        $boxes = Box::where('serviceType', 'PBox')
+            ->where('branch_id', $id)
+            ->when(!is_null($available), function ($query) use ($available) {
+                if ($available == 0) {
+                    $query->where('year', '>=', now()->year);
+                } else {
+                    $query->where('year', '<', now()->year);
+                }
+            })
+            ->orderBy('pob', 'asc')
+            ->get();
+
         return response()->json([
             'data' => $boxes,
             'status' => 200,
@@ -389,11 +397,12 @@ class PhysicalPobController extends Controller
     // pobCategory
     public function pobCategory()
     {
+        $currentYear = now()->year;
         $boxes = Box::where('serviceType', 'PBox')->select(
             'pob_category',
             DB::raw('count(*) as total'),
-            DB::raw('count(CASE WHEN available = 0 THEN 1 ELSE NULL END) as totalrenew'),
-            DB::raw('count(CASE WHEN available = 1 THEN 1 ELSE NULL END) as totalavailable')
+            DB::raw("count(CASE WHEN year >= {$currentYear} THEN 1 ELSE NULL END) as totalrenew"),
+            DB::raw("count(CASE WHEN year < {$currentYear} THEN 1 ELSE NULL END) as totalavailable")
         )->groupBy('pob_category')->get();
         return view('admin.physicalPob.pobCategory', compact('boxes'));
     }

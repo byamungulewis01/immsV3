@@ -17,6 +17,7 @@ class RolesController extends Controller
         $activities = Activity::activityGroupby();
         $users  = User::orderBy('name', 'asc')->get();
         $userRoles = Role::pluck('name')->toArray();
+        // dd($activities);
         return view('admin.roles', compact('roles', 'activities', 'users', 'userRoles'));
     }
     public function store(Request $request)

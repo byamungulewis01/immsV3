@@ -88,7 +88,7 @@
                                     <td>{{ strtoupper($courierPay->payment_type) }}</td>
                                     <td>{{ strtoupper($courierPay->payment_model) }}</td>
                                     <td><b>{{ number_format($courierPay->amount) }}</b></td>
-                                    <td>{{ $courierPay->user->name }}</td>
+                                    <td>{{ @$courierPay->user->name }}</td>
                                 </tr>
                             @endforeach
                             {{-- @foreach ($courierPays as $key => $courierPay)
