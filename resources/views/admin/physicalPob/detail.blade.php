@@ -227,12 +227,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if ($box->available)
+                                {{-- @if ($box->available) --}}
                                     <a href="" class="btn btn-sm btn-success" data-bs-toggle="modal"
                                         data-bs-target="#firstmodal">
                                         <span>Transfer </span>
                                     </a>
-                                @endif
+                                {{-- @endif --}}
 
                                 <div class="modal fade" id="firstmodal" aria-hidden="true" aria-labelledby="..."
                                     tabindex="-1">
