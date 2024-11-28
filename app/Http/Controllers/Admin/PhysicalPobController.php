@@ -398,7 +398,7 @@ class PhysicalPobController extends Controller
     public function pobCategory()
     {
         $currentYear = now()->year;
-        $boxes = Box::where('serviceType', 'PBox')->select(
+        $boxes = Box::where('serviceType', 'PBox')->where('branch_id',auth()->user()->branch)->select(
             'pob_category',
             DB::raw('count(*) as total'),
             DB::raw("count(CASE WHEN year >= {$currentYear} THEN 1 ELSE NULL END) as totalrenew"),
