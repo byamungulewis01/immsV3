@@ -34,7 +34,7 @@
             </div>
             <ul class="navbar-nav" id="navbar-nav">
 
-                @if (in_array(auth()->user()->level,['branchManager','administrative']))
+                @if (in_array(auth()->user()->level, ['branchManager', 'administrative']))
                     <li class="nav-item">
                         <a class="nav-link menu-link {{ Request::routeIs(['admin.dashboard']) ? 'active' : '' }}"
                             href="#sidebarDashboard" data-bs-toggle="collapse" href="{{ route('admin.dashboard') }}">
@@ -133,7 +133,7 @@
                 @include('components.admin.ericSidebar')
 
                 <!-- =============================  Branch Manager Activities =============================================================== -->
-                @if (auth()->user()->level == 'administrative')
+                {{-- @if (auth()->user()->level == 'administrative')
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Electricity
                         EUCL</span></li>
                     <li class="nav-item">
@@ -274,7 +274,7 @@
                         <i class="ri-file-list-3-line"></i> <span data-key="t-pages">DPO Integration</span>
                     </a>
                 </li>
-                @endcan
+                @endcan --}}
 
 
                 <!-- ============================= End Branch Manager Activities =============================================================== -->
@@ -534,8 +534,8 @@
 
                 <!-- ============================= END EMS National user Sidebar =============================================================== -->
 
-                @can('read roles', 'read permissions', 'read employee', 'read setting')
-                    <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Users Management</span>
+                @can('read roles', 'read permissions', 'read employee', 'read setting','manage-sms-template')
+                    <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">SETTING</span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="#permission" data-bs-toggle="collapse" role="button"
@@ -624,6 +624,30 @@
                             </ul>
                         </div>
                     </li>
+                    @can('read branch')
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ in_array(Route::currentRouteName(), ['admin.branch.index']) ? 'active' : '' }}"
+                                href="{{ route('admin.branch.index') }}" role="button">
+                                <i class="ri-book-line"></i> <span data-key="t-pages">Branches</span>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('read box-categories')
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ in_array(Route::currentRouteName(), ['admin.box-categories.index']) ? 'active' : '' }}"
+                                href="{{ route('admin.box-categories.index') }}" role="button">
+                                <i class="ri-book-line"></i> <span data-key="t-pages">Box Categories</span>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('manage-sms-template')
+                        <li class="nav-item">
+                            <a class="nav-link menu-link {{ in_array(Route::currentRouteName(), ['admin.sms-template.index']) ? 'active' : '' }}"
+                                href="{{ route('admin.box-categories.index') }}" role="button">
+                                <i class="ri-book-line"></i> <span data-key="t-pages">SMS Templates</span>
+                            </a>
+                        </li>
+                    @endcan
                 @endcan
 
             </ul>

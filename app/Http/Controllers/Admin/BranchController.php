@@ -28,11 +28,17 @@ class BranchController extends Controller
     # Store
     public function store(Request $request)
     {
-        $formField = $request->validate([
+        $request->validate([
             'name' => 'required|unique:branches,name',
             'status' => 'required',
+            'company_fees' => 'required|integer',
+            'individual_fees' => 'required|integer',
+            'cotion_fees' => 'required|integer',
+            'certificate_fees' => 'required|integer',
+            'key_fees' => 'required|integer',
+            'ingufuri_fees' => 'required|integer',
         ]);
-        Branch::create($formField);
+        Branch::create($request->all());
         return redirect()->back()->with('success', 'Branch Added Successfully');
     }
     # Edit
@@ -41,6 +47,12 @@ class BranchController extends Controller
         $formField = $request->validate([
             'name' => 'required|unique:branches,name,' . $id,
             'status' => 'required',
+            'company_fees' => 'required|integer',
+            'individual_fees' => 'required|integer',
+            'cotion_fees' => 'required|integer',
+            'certificate_fees' => 'required|integer',
+            'key_fees' => 'required|integer',
+            'ingufuri_fees' => 'required|integer',
         ]);
         Branch::findorfail($id)->update($formField);
         return to_route('admin.branch.index')->with('success', 'Branch Updated Successfully');

@@ -708,12 +708,12 @@
 
 @can('branch physicalPob')
     <li class="nav-item">
-        <a class="nav-link menu-link {{ in_array(Route::currentRouteName(), ['physicalPob.index', 'physicalPob.waitingList', 'physicalPob.approved', 'physicalPob.details', 'physicalPob.pobCategory']) ? 'active' : '' }}"
+        <a class="nav-link menu-link {{ in_array(Route::currentRouteName(), ['physicalPob.index', 'physicalPob.waitingList', 'physicalPob.approved', 'physicalPob.details', 'physicalPob.pobCategory','physicalPob.notification']) ? 'active' : '' }}"
             href="#sidebarLayouts" data-bs-toggle="collapse" role="button" aria-expanded="false"
             aria-controls="sidebarLayouts">
             <i class="ri-layout-3-line"></i> <span data-key="t-layouts">Physical P.O Box</span>
         </a>
-        <div class="collapse menu-dropdown {{ in_array(Route::currentRouteName(), ['physicalPob.index', 'physicalPob.waitingList', 'physicalPob.approved', 'physicalPob.selling', 'physicalPob.details', 'physicalPob.dailyIncome', 'physicalPob.monthlyIncome', 'physicalPob.pobCategory']) ? 'show' : '' }}"
+        <div class="collapse menu-dropdown {{ in_array(Route::currentRouteName(), ['physicalPob.index', 'physicalPob.waitingList', 'physicalPob.approved', 'physicalPob.selling', 'physicalPob.details', 'physicalPob.monthlyIncome', 'physicalPob.pobCategory','physicalPob.notification']) ? 'show' : '' }}"
             id="sidebarLayouts">
             <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
@@ -726,7 +726,7 @@
                         class="nav-link {{ Request::routeIs('physicalPob.selling') ? 'active' : '' }}"
                         data-key="t-poboxSelling">P.O Box Selling</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="#sidebarCandidatelists" class="nav-link" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="sidebarCandidatelists" data-key="t-candidate-lists">
                         P.O Box Application
@@ -747,12 +747,17 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> --}}
 
                 <li class="nav-item">
                     <a href="{{ route('physicalPob.pobCategory') }}"
                         class="nav-link {{ Request::routeIs('physicalPob.pobCategory') ? 'active' : '' }}"
-                        data-key="t-poboxSelling">P.O Box Categories</a>
+                        data-key="t-category">P.O Box Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('physicalPob.notification') }}"
+                        class="nav-link {{ Request::routeIs('physicalPob.notification') ? 'active' : '' }}"
+                        data-key="t-notification">Notifications</a>
                 </li>
             </ul>
         </div>
@@ -1069,7 +1074,8 @@
         </div>
     </li>
 @endcan
-@can('make outboxing')
+
+@canany(['make outboxing', 'branch physicalPob'])
     <li class="nav-item">
         <a class="nav-link menu-link" href="#mailincomereport" data-bs-toggle="collapse" role="button"
             aria-expanded="false" aria-controls="mailincomereport">
@@ -1095,6 +1101,7 @@
             : '' }}"
             id="mailincomereport">
             <ul class="nav nav-sm flex-column">
+                @can('make outboxing')
 
                 <li class="nav-item">
                     <a href="{{ route('admin.income.Oincames') }}"
@@ -1116,6 +1123,7 @@
                         class="nav-link {{ Request::routeIs('admin.incomeems.incomeemss') ? 'active' : '' }}"
                         data-key="t-nft-landing">EMS Inbox</a>
                 </li>
+                @endcan
                 {{-- <li class="nav-item">
                     <a href="{{ route('admin.incomegoogle.Gincames') }}"
                         class="nav-link {{ Request::routeIs('admin.incomegoogle.Gincames') ? 'active' : '' }}"
@@ -1150,7 +1158,7 @@
                             data-key="t-starter">Stamps Outbox</a>
                     </li>
                 @endcan
-                @can('make outboxing')
+                @can('branch physicalPob')
                     <li class="nav-item">
                         <a href="{{ route('physicalPob.dailyIncome') }}"
                             class="nav-link {{ Request::routeIs('physicalPob.dailyIncome') ? 'active' : '' }}"
@@ -1182,7 +1190,7 @@
             </ul>
         </div>
     </li>
-@endcan
+@endcanany
 
 @can('read outboxing')
     <li class="nav-item">

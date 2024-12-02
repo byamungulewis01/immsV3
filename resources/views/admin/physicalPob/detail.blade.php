@@ -7,6 +7,7 @@
 
     @php
         use App\Models\PreFormaBill;
+        $branch_info = auth()->user()->branchname;
 
         $rentYearNumber = now()->year - $box->year;
         $totalRent = $box->amount * $rentYearNumber;
@@ -118,21 +119,7 @@
                                                     </div>
 
                                                     <div class="row mb-2">
-                                                        <div class="col-md-6">
-                                                            <label for="formrow-firstname-input" class="form-label">P.O
-                                                                BOX
-                                                                TYPE</label>
-                                                            <select class="form-select" name="pob_category" required
-                                                                aria-label="Default select example">
-                                                                <option value="Individual"
-                                                                    {{ $box->pob_category == 'Individual' ? 'selected' : '' }}>
-                                                                    Individual</option>
-                                                                <option value="Company"
-                                                                    {{ $box->pob_category == 'Company' ? 'selected' : '' }}>
-                                                                    Company</option>
-                                                            </select>
 
-                                                        </div>
                                                         <div class="col-md-6">
                                                             <label for="formrow-firstname-input" class="form-label">P.O
                                                                 BOX
@@ -147,9 +134,6 @@
                                                                 </option>
                                                             </select>
                                                         </div>
-
-                                                    </div>
-                                                    <div class="row mb-2">
                                                         <div class="col-md-6">
                                                             <label for="formrow-firstname-input"
                                                                 class="form-label">COTION</label>
@@ -164,19 +148,40 @@
                                                             </select>
 
                                                         </div>
+
+                                                    </div>
+                                                    <div class="row mb-2">
+
+                                                        <div class="col-md-6">
+                                                            <label for="formrow-firstname-input" class="form-label">P.O
+                                                                BOX
+                                                                TYPE</label>
+                                                            <select class="form-select" name="pob_type" required
+                                                                aria-label="Default select example">
+                                                                <option value="Individual"
+                                                                    {{ $box->pob_type == 'Individual' ? 'selected' : '' }}>
+                                                                    Individual</option>
+                                                                <option value="Company"
+                                                                    {{ $box->pob_type == 'Company' ? 'selected' : '' }}>
+                                                                    Company</option>
+                                                            </select>
+
+                                                        </div>
                                                         <div class="col-md-6">
                                                             <label for="formrow-firstname-input"
-                                                                class="form-label">AVAIBALE</label>
-                                                            <select class="form-select" name="available" required
-                                                                aria-label="Default select example">
-                                                                <option value="1"
-                                                                    {{ $box->available == 1 ? 'selected' : '' }}>YES
-                                                                </option>
-                                                                <option value="0"
-                                                                    {{ $box->available == 0 ? 'selected' : '' }}>NO
-                                                                </option>
+                                                                class="form-label">Category </label>
+                                                            <select class="form-select" name="box_category_id" required>
+                                                                @foreach (\App\Models\BoxCategory::orderBy('name')->get() as $category)
+                                                                    <option value="{{ $category->id }}"
+                                                                        {{ old('box_category_id', $box->box_category_id) == $category->id ? 'selected' : '' }}>
+                                                                        {{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+
                                                             </select>
+
                                                         </div>
+
 
                                                     </div>
                                                     <div class="row mb-2">
@@ -228,10 +233,10 @@
                                     </div>
                                 </div>
                                 {{-- @if ($box->available) --}}
-                                    <a href="" class="btn btn-sm btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#firstmodal">
-                                        <span>Transfer </span>
-                                    </a>
+                                <a href="" class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#firstmodal">
+                                    <span>Transfer </span>
+                                </a>
                                 {{-- @endif --}}
 
                                 <div class="modal fade" id="firstmodal" aria-hidden="true" aria-labelledby="..."
@@ -427,7 +432,7 @@
                                             PHONE </th>
 
                                         <th class="sort" data-sort="type">
-                                            TYPE</th>
+                                            CATEGORY</th>
                                         <th class="sort" data-sort="size">
                                             SIZE</th>
                                         <th class="sort" data-sort="date">
@@ -447,7 +452,7 @@
                                         <td class="pob">{{ $box->pob }}</td>
                                         <td class="names">{{ $box->name }}</td>
                                         <td class="phone">{{ $box->phone }}</td>
-                                        <td class="type">{{ $box->pob_category }}</td>
+                                        <td class="type">{{ $box->category->name }}</td>
                                         <td class="size">{{ $box->size }}</td>
                                         <td class="date">{{ $box->date }}</td>
                                         <td class="date">{{ $box->year }}</td>
@@ -837,26 +842,26 @@
                 payment_year.disabled = false;
             } else if (e.target.value == 'cert') {
                 amount.disabled = true;
-                amount.value = 5000;
-                allAmount.value = 5000;
+                amount.value = "{{ $branch_info->certificate_fees }}";
+                allAmount.value =  "{{ $branch_info->certificate_fees }}";
                 payment_year.value = 'all';
                 payment_year.disabled = true;
             } else if (e.target.value == 'key') {
                 amount.disabled = true;
-                amount.value = 3500;
-                allAmount.value = 3500;
+                amount.value =  "{{ $branch_info->key_fees }}";
+                allAmount.value =  "{{ $branch_info->key_fees }}";
                 payment_year.value = 'all';
                 payment_year.disabled = true;
             } else if (e.target.value == 'cotion') {
                 amount.disabled = true;
-                amount.value = 11000;
-                allAmount.value = 11000;
+                amount.value =  "{{ $branch_info->cotion_fees }}";
+                allAmount.valurrrre =  "{{ $branch_info->cotion_fees }}";
                 payment_year.value = 'all';
                 payment_year.disabled = true;
             } else if (e.target.value == 'ingufuri') {
                 amount.disabled = true;
-                amount.value = 5000;
-                allAmount.value = 5000;
+                amount.value =  "{{ $branch_info->ingufuri_fees }}";
+                allAmount.value =  "{{ $branch_info->ingufuri_fees }}";
                 allAmount.value = amount.value;
                 payment_year.value = 'all';
                 payment_year.disabled = true;

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\NotificationController;
+use App\Jobs\SendPobRentReminderSMS;
 use App\Models\Box;
+use App\Models\Branch;
 use App\Models\PobApplication;
 use App\Models\PobBackup;
+use App\Models\PobNotification;
 use App\Models\PobPay;
 use App\Models\PreFormaBill;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -19,6 +22,7 @@ class PhysicalPobController extends Controller
     {
         return view('admin.physicalPob.index');
     }
+
     // api for pob
     public function pobApi($id)
     {
@@ -71,19 +75,21 @@ class PhysicalPobController extends Controller
     public function update(Request $request, $id)
     {
         #validate
-        $field = $request->validate([
+        $request->validate([
             'name' => 'required',
             'phone' => 'required|numeric|min:10',
             'year' => 'required',
-            'pob_category' => 'required',
+            'pob_type' => 'required',
+            'box_category_id' => 'required',
             'size' => 'required',
             'cotion' => 'required',
-            'available' => 'required',
             'EMSNationalContract' => 'required',
         ]);
-        #update
+        $branch = Branch::findOrFail(auth()->user()->branch);
+        $amount = ($request->pob_type == 'Company') ? $branch->company_fees : $branch->individual_fees;
+        $request->merge(['amount' => $amount]);
         $box = Box::find($id);
-        $box->update($field);
+        $box->update($request->all());
 
         return redirect()->back()->with('success', 'Pob Updated Successfully');
     }
@@ -260,7 +266,17 @@ class PhysicalPobController extends Controller
     #pobSellingStore
     public function pobSellingPut(Request $request, $id)
     {
-        $pob_type = ($request->category == 'Individual') ? 'Individual' : 'Company';
+        $request->validate([
+            'name' => 'required|min:3',
+            'email' => 'nullable|email',
+            'phone' => 'required|numeric|digits:10',
+            'pob_type' => 'required|in:Individual,Company|string',
+            'box_category_id' => 'required',
+        ]);
+
+        $branch = Branch::findOrFail(auth()->user()->branch);
+        $amount = ($request->pob_type == 'Company') ? $branch->company_fees : $branch->individual_fees;
+
         $box = Box::find($id);
         $box->update([
             'status' => 'payee',
@@ -268,30 +284,18 @@ class PhysicalPobController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'available' => false,
+            'amount' => $amount,
             'date' => now(),
-            'pob_category' => $request->category,
-            'pob_type' => $pob_type,
+            'pob_type' => $request->pob_type,
+            'box_category_id' => $request->box_category_id,
             'year' => now()->year,
-            'attachment' => null,
-            'customer_id' => null,
             'aprooved' => true,
             'booked' => true,
-            'profile' => null,
-            'homeAddress' => null,
-            'homePhone' => null,
-            'homeEmail' => null,
-            'homeVisible' => null,
-            'homeLocation' => null,
-            'officeAddress' => null,
-            'officePhone' => null,
-            'officeLocation' => null,
-            'officeEmail' => null,
-            'officeVisible' => null,
         ]);
 
         PobPay::create([
             'box_id' => $id,
-            'amount' => $box->amount,
+            'amount' => $amount,
             'year' => now()->year,
             'payment_type' => 'rent',
             'payment_model' => '',
@@ -398,12 +402,24 @@ class PhysicalPobController extends Controller
     public function pobCategory()
     {
         $currentYear = now()->year;
-        $boxes = Box::where('serviceType', 'PBox')->where('branch_id',auth()->user()->branch)->select(
-            'pob_category',
-            DB::raw('count(*) as total'),
-            DB::raw("count(CASE WHEN year >= {$currentYear} THEN 1 ELSE NULL END) as totalrenew"),
-            DB::raw("count(CASE WHEN year < {$currentYear} THEN 1 ELSE NULL END) as totalavailable")
-        )->groupBy('pob_category')->get();
+        $boxes = DB::table('boxes')
+            ->join('box_categories', 'boxes.box_category_id', '=', 'box_categories.id')
+            ->where([
+                ['boxes.serviceType', '=', 'PBox'],
+                ['boxes.branch_id', '=', auth()->user()->branch],
+            ])
+            ->select(
+                'box_categories.name as pob_category',
+                DB::raw('count(*) as total'),
+                DB::raw("count(CASE WHEN year >= {$currentYear} THEN 1 ELSE NULL END) as total_renew"),
+                DB::raw("count(CASE WHEN year < {$currentYear} THEN 1 ELSE NULL END) as total_available"),
+                DB::raw("SUM(amount) as total_amount"),
+                DB::raw("SUM(CASE WHEN year >= {$currentYear} THEN amount ELSE 0 END) as total_renew_amount"),
+                DB::raw("SUM(CASE WHEN year < {$currentYear} THEN amount ELSE 0 END) as total_available_amount")
+            )
+            ->groupBy('boxes.box_category_id')
+            ->get();
+
         return view('admin.physicalPob.pobCategory', compact('boxes'));
     }
     public function transactionpbox($pdate)
@@ -416,5 +432,42 @@ class PhysicalPobController extends Controller
         $pdf = Pdf::loadView('admin.backoffice.transactionphyisical', compact('pdate', 'inboxings'))
             ->setPaper('a4', 'portrait');
         return $pdf->stream('phyisicalpoboxtransaction.pdf');
+    }
+    public function notification()
+    {
+
+        $notifications = PobNotification::select(
+            'rent_year',
+            'created_at',
+            DB::raw("SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent_count"),
+            DB::raw("SUM(CASE WHEN status = 'not-sent' THEN 1 ELSE 0 END) as not_sent_count")
+        )
+            ->groupBy('rent_year')->orderByDesc('rent_year')
+            ->get();
+
+        return view('admin.physicalPob.notification', compact('notifications'));
+    }
+    public function storeNotification(Request $request)
+    {
+        $request->validate([
+            'year' => 'required|integer|min:4',
+        ]);
+
+        $check = PobNotification::where([
+            ['rent_year', $request->year],
+            ['type', 'rent'],
+        ])->first();
+        if ($check) {
+            return back()->with('warning', $request->year . ' year already notified');
+        }
+
+        $boxes = Box::where('branch_id', auth()->user()->branch)->select('id', 'pob', 'name', 'phone');
+        $boxes->chunk(100, function ($boxes) use ($request) {
+            foreach ($boxes as $box) {
+                SendPobRentReminderSMS::dispatch($box, $request->year);
+            }
+        });
+
+        return back()->with('success','Message sent successfully');
     }
 }

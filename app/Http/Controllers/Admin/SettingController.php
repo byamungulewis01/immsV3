@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Activity;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Activity;
+use App\Models\Setting;
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 
 class SettingController extends Controller
@@ -13,7 +14,9 @@ class SettingController extends Controller
     public function index()
     {
         $activities = Activity::orderBy('name')->get();
-        return view('admin.settings', compact('activities'));
+        $settings = Setting::all();
+
+        return view('admin.settings', compact('activities', 'settings'));
     }
     public function activityStore(Request $request)
     {
@@ -30,6 +33,14 @@ class SettingController extends Controller
         ]);
         Activity::findorfail($id)->update($formField);
         return to_route('admin.setting.index')->with('success', 'Activity Updated Successfully');
+    }
+    public function othersUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'value' => 'required',
+        ]);
+        Setting::findorfail($id)->update(['value' => $request->value]);
+        return to_route('admin.setting.index')->with('success', 'Setting Updated Successfully');
     }
     public function activityDestroy($id)
     {

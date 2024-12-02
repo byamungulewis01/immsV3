@@ -48,14 +48,17 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table id="datatableAjax" class="table table-centered table-hover align-middle table-nowrap mb-0"
+                    <table id="datatableAjax" class="table table-centered align-middle table-nowrap mb-0"
                         style="width: 100%;">
-                        <thead>
+                        <thead class="text-uppercase">
                             <tr>
                                 <th scope="col" style="width: 40px">Postal Branch</th>
-                                <th class="sort" data-sort="pob">Total PO Boxes</th>
-                                <th class="sort" data-sort="size">Renewed</th>
-                                <th class="sort" data-sort="cotion">Not renewed</th>
+                                <th class="sort bg-primary text-white" data-sort="pob">Total PO Boxes</th>
+                                <th class="sort bg-primary text-white" data-sort="pob">Amount</th>
+                                <th class="sort bg-info text-white" data-sort="size">Renewed</th>
+                                <th class="sort bg-info text-white" data-sort="size">Amount</th>
+                                <th class="sort bg-dark text-white" data-sort="cotion">Not renewed</th>
+                                <th class="sort bg-dark text-white" data-sort="amount">Amount</th>
                                 {{-- <th class="sort" data-sort="amount"> Total BP renewed</th>
                             <th class="sort" data-sort="action">Total BP not renewed</th> --}}
                             </tr>
@@ -63,30 +66,43 @@
                         <tbody>
                             @php
                                 $total = 0;
-                                $totalrenew = 0;
-                                $totalavailable = 0;
+                                $total_renew = 0;
+                                $total_available = 0;
+                                $total_amount = 0;
+                                $total_renew_amount = 0;
+                                $total_available_amount = 0;
                             @endphp
                             @foreach ($boxes as $key => $box)
                                 <tr>
-                                    <td>{{ $box->pob_category }}</td>
-                                    <td>{{ $box->total }}</td>
-                                    <td>{{ $box->totalrenew }}</td>
-                                    <td>{{ $box->totalavailable }}</td>
+                                    <td class="text-uppercase">{{ $box->pob_category }}</td>
+                                    <td class="bg-primary text-white">{{ number_format($box->total) }} </td>
+                                    <td class="bg-primary text-white">{{ number_format($box->total_amount) }} RWF</td>
+                                    <td class="bg-info text-white">{{ number_format($box->total_renew) }}</td>
+                                    <td class="bg-info text-white">{{ number_format($box->total_renew_amount) }} RWF</td>
+                                    <td class="bg-dark text-white">{{ number_format($box->total_available) }}</td>
+                                    <td class="bg-dark text-white">{{ number_format($box->total_available_amount) }} RWF</td>
+
                                 </tr>
                                 @php
                                     $total = $box->total + $total;
-                                    $totalrenew = $box->totalrenew + $totalrenew;
-                                    $totalavailable = $box->totalavailable + $totalavailable;
+                                    $total_renew = $box->total_renew + $total_renew;
+                                    $total_available = $box->total_available + $total_available;
+                                    $total_amount = $box->total_amount + $total_amount;
+                                    $total_renew_amount = $box->total_renew_amount + $total_renew_amount;
+                                    $total_available_amount = $box->total_available_amount + $total_available_amount;
                                 @endphp
                             @endforeach
 
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td><strong>Total</strong></td>
-                                <td>{{ $total }}</td>
-                                <td>{{ $totalrenew }}</td>
-                                <td>{{ $totalavailable }}</td>
+                                <td><strong>TOTAL</strong></td>
+                                <td class="bg-primary text-white">{{ number_format($total) }}</td>
+                                <td class="bg-primary text-white">{{ number_format($total_amount) }} RWF</td>
+                                <td class="bg-info text-white">{{ number_format($total_renew) }}</td>
+                                <td class="bg-info text-white">{{ number_format($total_renew_amount) }} RWF</td>
+                                <td class="bg-dark text-white">{{ number_format($total_available) }}</td>
+                                <td class="bg-dark text-white">{{ number_format($total_available_amount) }} RWF</td>
                             </tr>
                         </tfoot>
                     </table>

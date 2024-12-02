@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
         Route::post('physicalPob/preform/{id}', 'preformaStore')->name('preformaStore');
         Route::post('physicalPob/preformNotify/{id}', 'preformNotify')->name('preformNotify');
         Route::get('physicalPob/pobCategory', 'pobCategory')->name('pobCategory');
+        Route::get('physicalPob/notification', 'notification')->name('notification');
+        Route::post('physicalPob/storeNotification', 'storeNotification')->name('storeNotification');
 
     });
     // VirtualPobController

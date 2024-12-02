@@ -19,7 +19,7 @@ class Box extends Model
         'phone',
         'available',
         'date',
-        'pob_category',
+        'box_category_id',
         'serviceType',
         'pob_type',
         'amount',
@@ -43,7 +43,6 @@ class Box extends Model
         'officeVisible',
         'officeAddressCode',
         'homeAddressCode',
-
     ];
 
     public function homeDelivery()
@@ -55,6 +54,10 @@ class Box extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');
+    }
+    public function category()
+    {
+        return $this->belongsTo(BoxCategory::class, 'box_category_id');
     }
 }
 

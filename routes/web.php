@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminPobController;
 use App\Http\Controllers\Admin\AdminAddressingController;
 use App\Http\Controllers\Admin\AdminDashController;
+use App\Http\Controllers\Admin\BoxCategoryController;
 use App\Http\Controllers\Admin\BoxController;
 use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DispatchInvoiceController;
@@ -94,6 +95,7 @@ Route::name('admin.')->middleware('auth')->group(function () {
         Route::put('/branch/{id}', 'update')->name('update');
         Route::delete('/branch/{id}', 'destroy')->name('destroy');
     });
+    Route::resource('box-categories', BoxCategoryController::class);
     //   End Branche
 
     //    POBbox
@@ -137,6 +139,7 @@ Route::name('admin.')->middleware('auth')->group(function () {
             Route::post('/activity', 'activityStore')->name('store');
             Route::put('/activity/{id}', 'activityUpdate')->name('update');
             Route::delete('/activity/{id}', 'activityDestroy')->name('destroy');
+            Route::put('/others/{id}', 'othersUpdate')->name('othersUpdate');
         });
     });
     //   End Settings
