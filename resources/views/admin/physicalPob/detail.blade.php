@@ -348,7 +348,8 @@
                                                             <select class="form-select" name="payment_year"
                                                                 id="payment_year" required
                                                                 aria-label="Default select example">
-                                                                <option value="all" selected>Payment All Debits</option>
+                                                                <option value="all" selected>Current year
+                                                                    ({{ now()->year }})</option>
                                                                 {{-- yearsNotpaid --}}
                                                                 @foreach ($yearsNotpaid as $year)
                                                                     <option value="{{ $year }}">
@@ -674,15 +675,14 @@
                     </div>
                 </div>
             </div>
-            @unless ($box->year >= now()->year)
+            {{-- @unless ($box->year >= now()->year) --}}
                 <div class="card" id="customerList">
                     <div class="card-body">
                         <div>
                             <div class="table-responsive table-card mb-1">
                                 @php
                                     $items = PreFormaBill::where('box', $box->id)
-                                        ->latest()
-                                        ->first();
+                                        ->latest()->first();
                                     $currentYear = date('Y');
 
                                     $billYears = [];
@@ -708,6 +708,9 @@
                                                     $yearsNotpaid = [];
                                                     for ($i = $paidYear; $i <= $currentYear; $i++) {
                                                         $yearsNotpaid[] = $i;
+                                                    }
+                                                    if (now()->month == 12) {
+                                                        $yearsNotpaid[] = $currentYear + 1;
                                                     }
 
                                                 @endphp
@@ -773,7 +776,7 @@
                         </div>
                     </div>
                 </div>
-            @endunless
+            {{-- @endunless --}}
 
         </div>
         <!--end col-->
@@ -843,25 +846,25 @@
             } else if (e.target.value == 'cert') {
                 amount.disabled = true;
                 amount.value = "{{ $branch_info->certificate_fees }}";
-                allAmount.value =  "{{ $branch_info->certificate_fees }}";
+                allAmount.value = "{{ $branch_info->certificate_fees }}";
                 payment_year.value = 'all';
                 payment_year.disabled = true;
             } else if (e.target.value == 'key') {
                 amount.disabled = true;
-                amount.value =  "{{ $branch_info->key_fees }}";
-                allAmount.value =  "{{ $branch_info->key_fees }}";
+                amount.value = "{{ $branch_info->key_fees }}";
+                allAmount.value = "{{ $branch_info->key_fees }}";
                 payment_year.value = 'all';
                 payment_year.disabled = true;
             } else if (e.target.value == 'cotion') {
                 amount.disabled = true;
-                amount.value =  "{{ $branch_info->cotion_fees }}";
-                allAmount.valurrrre =  "{{ $branch_info->cotion_fees }}";
+                amount.value = "{{ $branch_info->cotion_fees }}";
+                allAmount.valurrrre = "{{ $branch_info->cotion_fees }}";
                 payment_year.value = 'all';
                 payment_year.disabled = true;
             } else if (e.target.value == 'ingufuri') {
                 amount.disabled = true;
-                amount.value =  "{{ $branch_info->ingufuri_fees }}";
-                allAmount.value =  "{{ $branch_info->ingufuri_fees }}";
+                amount.value = "{{ $branch_info->ingufuri_fees }}";
+                allAmount.value = "{{ $branch_info->ingufuri_fees }}";
                 allAmount.value = amount.value;
                 payment_year.value = 'all';
                 payment_year.disabled = true;

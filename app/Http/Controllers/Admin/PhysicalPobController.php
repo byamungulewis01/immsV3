@@ -355,6 +355,9 @@ class PhysicalPobController extends Controller
         for ($i = $paidYear; $i <= $currentYear; $i++) {
             $yearsNotpaid[] = $i;
         }
+        if (now()->month == 12) {
+            $yearsNotpaid[] = $currentYear + 1;
+        }
 
         PreFormaBill::create([
             'bill_number' => str_pad(PreFormaBill::count() + 1, 4, '0', STR_PAD_LEFT) . '/AGK/' . now()->year,
@@ -370,7 +373,7 @@ class PhysicalPobController extends Controller
     {
 
         $item = PreFormaBill::where('box', $id)->latest()->first();
-
+        // return view('admin.physicalpob.preforma', compact('item'));
         $pdf = Pdf::loadView('admin.physicalpob.preforma', compact('item'))
             ->setPaper('a4', 'portrait');
         return $pdf->stream('invoice.pdf');
@@ -453,6 +456,7 @@ class PhysicalPobController extends Controller
             'year' => 'required|integer|min:4',
         ]);
 
+
         $check = PobNotification::where([
             ['rent_year', $request->year],
             ['type', 'rent'],
@@ -461,13 +465,15 @@ class PhysicalPobController extends Controller
             return back()->with('warning', $request->year . ' year already notified');
         }
 
-        $boxes = Box::where('branch_id', auth()->user()->branch)->select('id', 'pob', 'name', 'phone');
+
+        $boxes = Box::where('branch_id', 3)->select('id', 'pob', 'name', 'phone');
+        // $boxes = Box::where('branch_id', auth()->user()->branch)->select('id', 'pob', 'name', 'phone');
         $boxes->chunk(100, function ($boxes) use ($request) {
             foreach ($boxes as $box) {
                 SendPobRentReminderSMS::dispatch($box, $request->year);
             }
         });
 
-        return back()->with('success','Message sent successfully');
+        return back()->with('success', 'Message sent successfully');
     }
 }

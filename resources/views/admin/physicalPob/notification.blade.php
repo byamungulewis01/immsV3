@@ -83,7 +83,7 @@
                                                         Close
                                                     </button>
                                                     <button type="submit" class="btn btn-success">
-                                                        Send SMS dddd
+                                                        Send SMS
                                                     </button>
                                                 </div>
                                             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\NotificationController;
 use App\Models\Box;
 use App\Models\PobNotification;
 use App\Models\Setting;
@@ -40,6 +41,9 @@ class SendPobRentReminderSMS implements ShouldQueue
         ];
         if ($this->isValidPhoneNumber($this->box->phone)) {
             $data['status'] = 'sent';
+            $formattedPhone = $this->formatPhoneNumber($this->box->phone);
+            (new NotificationController)->send_sms($formattedPhone, $personalMessage);
+
         } else {
             $data['status'] = 'not-sent';
         }
@@ -50,4 +54,11 @@ class SendPobRentReminderSMS implements ShouldQueue
     {
         return preg_match('/^(07\d{8}|2507\d{8})$/', $phone);
     }
+    private function formatPhoneNumber($phoneNumber)
+{
+    if (strlen($phoneNumber) == 12 && substr($phoneNumber, 0, 2) == '25') {
+        return substr($phoneNumber, 2);
+    }
+    return $phoneNumber;
+}
 }

@@ -154,15 +154,21 @@
                     },
                 ],
                 order: [],
-                dom: 'Bfrtip', // Enables the buttons to appear above the table
+                dom: '<"d-flex justify-content-between align-items-center"lB>frtip', // Ensure 'l' is included for length menu
                 buttons: [{
                     extend: 'excelHtml5',
                     text: 'Download Excel',
                     exportOptions: {
                         columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
                     }
-                }]
+                }],
+                // lengthMenu: [
+                //     [10, 25, 50, 100],
+                //     [10, 25, 50, 100]
+                // ],
+                // pageLength: 10
             });
         });
     </script>
+
 @endsection

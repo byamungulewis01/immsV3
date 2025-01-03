@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
 
@@ -32,6 +33,7 @@ class AdminAuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+        // dd(Branch::all());
         $credentials = $request->only('email', 'password');
         if (auth()->attempt($credentials)) {
             # check if user status is inactive
